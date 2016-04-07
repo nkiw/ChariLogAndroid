@@ -6,4 +6,7 @@
     <string name="tv_latitude">緯度：</string>
     <string name="tv_longitude">経度：</string>
     <string name="tv_default_val">----</string>
+
+    <string name="buttonStart">Start</string>
+    <string name="buttonStop">Stop</string>
 </resources>

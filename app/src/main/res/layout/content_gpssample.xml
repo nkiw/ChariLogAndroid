@@ -8,9 +8,24 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TableRow>
+            <Button
+                android:id="@+id/buttonStart"
+                android:layout_width="100dp"
+                android:layout_height="80dp"
+                android:text="@string/buttonStart"/>
+
+            <Button
+                android:id="@+id/buttonStop"
+                android:layout_width="100dp"
+                android:layout_height="80dp"
+                android:text="@string/buttonStop"/>
+        </TableRow>
 
         <TableRow>
             <TextView
