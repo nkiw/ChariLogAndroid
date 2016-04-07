@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class GPSSample extends AppCompatActivity implements LocationListener {
-	// Git test
+	// Git test.
 	private LocationManager mLocationManager;
 
 	@Override
