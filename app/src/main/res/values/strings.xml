@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">GPSSample</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="tv_time">時間：</string>
+    <string name="tv_latitude">緯度：</string>
+    <string name="tv_longitude">経度：</string>
+    <string name="tv_default_val">----</string>
+</resources>
