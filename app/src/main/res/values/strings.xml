@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">GPSSample</string>
+    <string name="app_name">チャリログ</string>
     <string name="action_settings">Settings</string>
 
+    <string name="tv_location_info">《位置情報》</string>
     <string name="tv_time">時間：</string>
     <string name="tv_latitude">緯度：</string>
     <string name="tv_longitude">経度：</string>
@@ -9,4 +10,11 @@
 
     <string name="buttonStart">Start</string>
     <string name="buttonStop">Stop</string>
+
+    <string name="tv_cycling_info">《走行状況》</string>
+    <string name="tv_total_time">経過時間：</string>
+    <string name="tv_total_distance">走行距離：</string>
+    <string name="tv_current_speed">走行時速：</string>
+    <string name="tv_max_speed">最高時速：</string>
+    <string name="tv_ave_speed">平均時速：</string>
 </resources>

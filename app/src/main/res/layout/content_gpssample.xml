@@ -8,11 +8,11 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
+        <!--ボタン-->
         <TableRow>
             <Button
                 android:id="@+id/buttonStart"
@@ -25,6 +25,20 @@
                 android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:text="@string/buttonStop"/>
+
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <!--位置情報-->
+        <TableRow>
+            <TextView
+                android:layout_span="2"
+                android:text="@string/tv_location_info"/>
         </TableRow>
 
         <TableRow>
@@ -66,6 +80,73 @@
                 android:text="@string/tv_default_val"/>
         </TableRow>
 
+        <!--走行状況-->
+        <TableRow
+            android:layout_marginTop="10dp">
+            <TextView
+                android:layout_span="2"
+                android:text="@string/tv_cycling_info"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_total_time"/>
+
+            <TextView
+                android:id="@+id/tv_total_time_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_default_val"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_total_distance"/>
+
+            <TextView
+                android:id="@+id/tv_total_distance_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_default_val"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_current_speed"/>
+
+            <TextView
+                android:id="@+id/tv_current_speed_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_default_val"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_max_speed"/>
+
+            <TextView
+                android:id="@+id/tv_max_speed_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_default_val"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_ave_speed"/>
+
+            <TextView
+                android:id="@+id/tv_ave_speed_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_default_val"/>
+        </TableRow>
     </TableLayout>
 
 </LinearLayout>

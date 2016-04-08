@@ -3,7 +3,7 @@ package android.example.iwamin.gpssample;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.example.iwamin.gpssample.repository.LocationRepository;
+import android.example.iwamin.gpssample.monitor.CyclingMonitor;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +23,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GPSSample extends AppCompatActivity {
+	private final int REQUEST_PERMISSION = 10;
+
 	private Timer timer = new Timer();
+	private boolean isExecute = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,10 @@ public class GPSSample extends AppCompatActivity {
 		buttonStart.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startLoggingLocation();		// Locationサービス開始
+				if (isExecute == false) {
+					isExecute = true;
+					readyLocationService();        // Locationサービス開始
+				}
 			}
 		});
 
@@ -46,7 +52,10 @@ public class GPSSample extends AppCompatActivity {
 		buttonStop.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stopLocationService();		// Locationサービス停止
+				if (isExecute == true) {
+					stopLocationService();        // Locationサービス停止
+					isExecute = false;
+				}
 			}
 		});
 
@@ -74,8 +83,16 @@ public class GPSSample extends AppCompatActivity {
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-		startLocationService();
-		Toast.makeText(this, "onRequestPermissionsResult", Toast.LENGTH_SHORT).show();
+		if (requestCode == REQUEST_PERMISSION) {
+			if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				// 許可された
+				startLocationService();
+			} else {
+				// 許可されなかった
+				Toast.makeText(this, "GPSの実行許可が必要です", Toast.LENGTH_SHORT).show();
+				isExecute = false;
+			}
+		}
 	}
 
 	@Override
@@ -100,16 +117,24 @@ public class GPSSample extends AppCompatActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void startLoggingLocation() {
+	private void readyLocationService() {
 		final int SDK_VERSION_ANDROID6 = 23;
 
 		if (Build.VERSION.SDK_INT >= SDK_VERSION_ANDROID6) {
-			int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+			// Android6.0以上は許可設定が必要
+			int permission = ActivityCompat.checkSelfPermission(
+					this,
+					Manifest.permission.ACCESS_FINE_LOCATION);
 
-			if (permission == PackageManager.PERMISSION_GRANTED) {	// 許可されている
+			if (permission == PackageManager.PERMISSION_GRANTED) {
+				// 許可されていた場合
 				startLocationService();
-			} else {												// 許可されていない
-				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 10);
+			} else {
+				// 許可されていない場合
+				ActivityCompat.requestPermissions(
+						this,
+						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+						REQUEST_PERMISSION);
 			}
 		} else {
 			startLocationService();
@@ -136,9 +161,11 @@ public class GPSSample extends AppCompatActivity {
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			Location location = LocationRepository.getInstance().getCurrentLocation();
+			CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getCyclingInfo();
+			Location location = info.getLocation();
 
 			if (location != null) {
+				// 位置情報の表示
 				TextView tvTime = (TextView) findViewById(R.id.tv_time_val);
 				TextView tvLatitude = (TextView) findViewById(R.id.tv_latitude_val);
 				TextView tvLongitude = (TextView) findViewById(R.id.tv_longitude_val);
@@ -146,6 +173,19 @@ public class GPSSample extends AppCompatActivity {
 				tvTime.setText(String.valueOf(location.getTime()));
 				tvLatitude.setText(String.valueOf(location.getLatitude()));
 				tvLongitude.setText(String.valueOf(location.getLongitude()));
+
+				// 走行状況の表示
+				TextView tvTotalTime = (TextView) findViewById(R.id.tv_total_time_val);
+				TextView tvTotalDistance = (TextView) findViewById(R.id.tv_total_distance_val);
+				TextView tvCurrentSpeed = (TextView) findViewById(R.id.tv_current_speed_val);
+				TextView tvMaximumSpeed = (TextView) findViewById(R.id.tv_max_speed_val);
+				TextView tvAverageSpeed = (TextView) findViewById(R.id.tv_ave_speed_val);
+
+				tvTotalTime.setText(String.valueOf(info.getTotalTime() / 1000) + "[sec]");
+				tvTotalDistance.setText(String.valueOf(info.getTotalDistance() + "[m]"));
+				tvCurrentSpeed.setText(String.format("%.2f", info.getCurrentSpeed()) + "[km/h]");
+				tvMaximumSpeed.setText(String.format("%.2f", info.getMaximumSpeed()) + "[km/h]");
+				tvAverageSpeed.setText(String.format("%.2f", info.getAverageSpeed()) + "[km/h]");
 			}
 		}
 	};
