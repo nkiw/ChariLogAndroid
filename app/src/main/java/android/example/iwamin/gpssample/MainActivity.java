@@ -28,6 +28,16 @@ public class MainActivity extends AppCompatActivity {
 	private Timer timer = new Timer();
 	private boolean isExecute = false;
 
+	TextView tvTime;
+	TextView tvLatitude;
+	TextView tvLongitude;
+	TextView tvAltitude;
+	TextView tvTotalTime;
+	TextView tvTotalDistance;
+	TextView tvCurrentSpeed;
+	TextView tvMaximumSpeed;
+	TextView tvAverageSpeed;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,8 +69,20 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
+		// 画面更新用の周期ハンドラ設定
 		timer = new Timer();
 		timer.schedule(timerTask, 500, 500);
+
+		// TextViewのオブジェクト取得
+		tvTime = (TextView)findViewById(R.id.tv_time_val);
+		tvLatitude = (TextView)findViewById(R.id.tv_latitude_val);
+		tvLongitude = (TextView)findViewById(R.id.tv_longitude_val);
+		tvAltitude = (TextView)findViewById(R.id.tv_altitude_val);
+		tvTotalTime = (TextView)findViewById(R.id.tv_total_time_val);
+		tvTotalDistance = (TextView)findViewById(R.id.tv_total_distance_val);
+		tvCurrentSpeed = (TextView)findViewById(R.id.tv_current_speed_val);
+		tvMaximumSpeed = (TextView)findViewById(R.id.tv_max_speed_val);
+		tvAverageSpeed = (TextView)findViewById(R.id.tv_ave_speed_val);
 	}
 
 	@Override
@@ -165,29 +187,38 @@ public class MainActivity extends AppCompatActivity {
 			Location location = info.getLocation();
 
 			if (location != null) {
-				// 位置情報の表示
-				TextView tvTime = (TextView)findViewById(R.id.tv_time_val);
-				TextView tvLatitude = (TextView)findViewById(R.id.tv_latitude_val);
-				TextView tvLongitude = (TextView)findViewById(R.id.tv_longitude_val);
-				TextView tvAltitude = (TextView)findViewById(R.id.tv_altitude_val);
-
+				// GPSデータの表示
 				tvTime.setText(String.valueOf(location.getTime()));
 				tvLatitude.setText(String.valueOf(location.getLatitude()));
 				tvLongitude.setText(String.valueOf(location.getLongitude()));
 				tvAltitude.setText(String.valueOf(location.getAltitude()));
 
 				// 走行状況の表示
-				TextView tvTotalTime = (TextView)findViewById(R.id.tv_total_time_val);
-				TextView tvTotalDistance = (TextView)findViewById(R.id.tv_total_distance_val);
-				TextView tvCurrentSpeed = (TextView)findViewById(R.id.tv_current_speed_val);
-				TextView tvMaximumSpeed = (TextView)findViewById(R.id.tv_max_speed_val);
-				TextView tvAverageSpeed = (TextView)findViewById(R.id.tv_ave_speed_val);
+				long hour = info.getTotalTime() / 1000 / 3600;
+				long minute = (info.getTotalTime() / 1000 / 60) - (hour * 60);
+				long second = (info.getTotalTime() / 1000) - (hour * 3600) - (minute * 60);
+				String stringTime = "";
+				if (hour > 0) {
+					stringTime = hour + "時間" + minute + "分" + second + "秒";
+				} else if (minute > 0) {
+					stringTime = minute + "分" + second + "秒";
+				} else {
+					stringTime = second + "秒";
+				}
 
-				tvTotalTime.setText(String.valueOf(info.getTotalTime() / 1000) + "[sec]");
-				tvTotalDistance.setText(String.valueOf(info.getTotalDistance() + "[m]"));
-				tvCurrentSpeed.setText(String.format("%.2f", info.getCurrentSpeed()) + "[km/h]");
-				tvMaximumSpeed.setText(String.format("%.2f", info.getMaximumSpeed()) + "[km/h]");
-				tvAverageSpeed.setText(String.format("%.2f", info.getAverageSpeed()) + "[km/h]");
+				int distance = info.getTotalDistance();
+				String stringDistance;
+				if (distance >= 1000) {
+					stringDistance = ((double)distance / 1000) + " [km]";
+				} else {
+					stringDistance = distance + " [m]";
+				}
+
+				tvTotalTime.setText(stringTime);
+				tvTotalDistance.setText(stringDistance);
+				tvCurrentSpeed.setText(String.format("%.1f", info.getCurrentSpeed()) + "[km/h]");
+				tvMaximumSpeed.setText(String.format("%.1f", info.getMaximumSpeed()) + "[km/h]");
+				tvAverageSpeed.setText(String.format("%.1f", info.getAverageSpeed()) + "[km/h]");
 			}
 		}
 	};

@@ -104,36 +104,42 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="24dp"
                 android:text="@string/tv_total_time"/>
 
             <TextView
                 android:id="@+id/tv_total_time_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="24dp"
                 android:text="@string/tv_default_val"/>
         </TableRow>
         <TableRow>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="24dp"
                 android:text="@string/tv_total_distance"/>
 
             <TextView
                 android:id="@+id/tv_total_distance_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="24dp"
                 android:text="@string/tv_default_val"/>
         </TableRow>
         <TableRow>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="24dp"
                 android:text="@string/tv_current_speed"/>
 
             <TextView
                 android:id="@+id/tv_current_speed_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="24dp"
                 android:text="@string/tv_default_val"/>
         </TableRow>
         <TableRow>
