@@ -27,6 +27,7 @@ public class LocationRepository {
 	private static final String COLUMN_GPS_TIME = "time";
 	private static final String COLUMN_GPS_LATITUDE = "latitude";
 	private static final String COLUMN_GPS_LONGITUDE = "longitude";
+	private static final String COLUMN_GPS_ALTITUDE = "altitude";
 
 
 	private SQLiteOpenHelper databaseHelper;
@@ -62,7 +63,8 @@ public class LocationRepository {
 		String sql = "create table " + (TABLE_GPS_PREFIX + startTime) + " ("
 				+ COLUMN_GPS_TIME + " integer not null, "
 				+ COLUMN_GPS_LATITUDE + " real not null, "
-				+ COLUMN_GPS_LONGITUDE + " real not null)";
+				+ COLUMN_GPS_LONGITUDE + " real not null, "
+				+ COLUMN_GPS_ALTITUDE + " real not null)";
 		Log.v("SQL", sql);
 		try {
 			database.execSQL(sql);
@@ -82,6 +84,7 @@ public class LocationRepository {
 			values.put(COLUMN_GPS_TIME, location.getTime());
 			values.put(COLUMN_GPS_LATITUDE, location.getLatitude());
 			values.put(COLUMN_GPS_LONGITUDE, location.getLongitude());
+			values.put(COLUMN_GPS_ALTITUDE, location.getAltitude());
 
 			database.insert((TABLE_GPS_PREFIX + startTime), null, values);
 			database.setTransactionSuccessful();
@@ -154,7 +157,8 @@ public class LocationRepository {
 		String[] columns_gps = {
 				COLUMN_GPS_TIME,
 				COLUMN_GPS_LATITUDE,
-				COLUMN_GPS_LONGITUDE
+				COLUMN_GPS_LONGITUDE,
+				COLUMN_GPS_ALTITUDE
 		};
 
 		try {
@@ -176,7 +180,7 @@ public class LocationRepository {
 			Cursor cursor_gps = db.query(tableName, columns_gps, null, null, null, null, COLUMN_GPS_TIME);
 			while (cursor_gps.moveToNext()) {
 				Log.d("GPS", "{" + cursor_gps.getLong(0) + ", " + cursor_gps.getDouble(1) + ". "
-						+ cursor_gps.getDouble(2) + "}");
+						+ cursor_gps.getDouble(2) + ", " + cursor_gps.getDouble(3) + "}");
 
 			}
 			db.close();

@@ -166,20 +166,22 @@ public class GPSSample extends AppCompatActivity {
 
 			if (location != null) {
 				// 位置情報の表示
-				TextView tvTime = (TextView) findViewById(R.id.tv_time_val);
-				TextView tvLatitude = (TextView) findViewById(R.id.tv_latitude_val);
-				TextView tvLongitude = (TextView) findViewById(R.id.tv_longitude_val);
+				TextView tvTime = (TextView)findViewById(R.id.tv_time_val);
+				TextView tvLatitude = (TextView)findViewById(R.id.tv_latitude_val);
+				TextView tvLongitude = (TextView)findViewById(R.id.tv_longitude_val);
+				TextView tvAltitude = (TextView)findViewById(R.id.tv_altitude_val);
 
 				tvTime.setText(String.valueOf(location.getTime()));
 				tvLatitude.setText(String.valueOf(location.getLatitude()));
 				tvLongitude.setText(String.valueOf(location.getLongitude()));
+				tvAltitude.setText(String.valueOf(location.getAltitude()));
 
 				// 走行状況の表示
-				TextView tvTotalTime = (TextView) findViewById(R.id.tv_total_time_val);
-				TextView tvTotalDistance = (TextView) findViewById(R.id.tv_total_distance_val);
-				TextView tvCurrentSpeed = (TextView) findViewById(R.id.tv_current_speed_val);
-				TextView tvMaximumSpeed = (TextView) findViewById(R.id.tv_max_speed_val);
-				TextView tvAverageSpeed = (TextView) findViewById(R.id.tv_ave_speed_val);
+				TextView tvTotalTime = (TextView)findViewById(R.id.tv_total_time_val);
+				TextView tvTotalDistance = (TextView)findViewById(R.id.tv_total_distance_val);
+				TextView tvCurrentSpeed = (TextView)findViewById(R.id.tv_current_speed_val);
+				TextView tvMaximumSpeed = (TextView)findViewById(R.id.tv_max_speed_val);
+				TextView tvAverageSpeed = (TextView)findViewById(R.id.tv_ave_speed_val);
 
 				tvTotalTime.setText(String.valueOf(info.getTotalTime() / 1000) + "[sec]");
 				tvTotalDistance.setText(String.valueOf(info.getTotalDistance() + "[m]"));
