@@ -22,7 +22,7 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GPSSample extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 	private final int REQUEST_PERMISSION = 10;
 
 	private Timer timer = new Timer();
@@ -31,7 +31,7 @@ public class GPSSample extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_gpssample);
+		setContentView(R.layout.activity_main);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 

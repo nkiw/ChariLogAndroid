@@ -2,7 +2,8 @@ package android.example.iwamin.gpssample;
 
 import android.app.Service;
 import android.content.Intent;
-import android.example.iwamin.gpssample.repository.LocationRepository;
+import android.example.iwamin.gpssample.repository.RepositoryReader;
+import android.example.iwamin.gpssample.repository.RepositoryWriter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,17 +14,17 @@ import android.util.Log;
 public class LocationService extends Service implements LocationListener {
 	private static final int PERIOD_SAMPLING = 1000;		// サンプリング周期[msec]
 
-	private LocationRepository locationRepository;
+	private RepositoryWriter repositoryWriter;
 	private LocationManager locationManager;
 
 	@Override
 	public void onCreate() {
-		if (locationRepository == null) {
-			locationRepository = new LocationRepository();
+		if (repositoryWriter == null) {
+			repositoryWriter = new RepositoryWriter();
 		}
 
 		// 記録開始の準備
-		locationRepository.readyLogging(this);
+		repositoryWriter.readyLogging(this);
 
 		// GPSの位置取得処理開始
 		locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
@@ -59,12 +60,15 @@ public class LocationService extends Service implements LocationListener {
 		}
 
 		// 記録処理を停止する
-		locationRepository.stopLogging();
+		repositoryWriter.stopLogging();
+
+		// for debug
+		new RepositoryReader().dumpRepository(this);
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-		locationRepository.reportLocationChange(location);
+		repositoryWriter.reportLocationChange(location);
 
 //		Log.v("onLocationChanged", location.toString());
 	}
