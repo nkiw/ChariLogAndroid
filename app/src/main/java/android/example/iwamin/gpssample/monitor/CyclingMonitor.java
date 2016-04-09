@@ -61,6 +61,10 @@ public class CyclingMonitor {
 		info.location = location;
 		locationList.add(location);
 
+		if (locationList.size() > SPEED_MEASURE_RANGE) {
+			locationList.remove(0);
+		}
+
 		Log.v("CyclingMonitor", info.toString());
 	}
 
