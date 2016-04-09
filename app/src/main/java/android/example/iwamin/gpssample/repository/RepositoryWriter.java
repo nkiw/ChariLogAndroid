@@ -26,18 +26,7 @@ public class RepositoryWriter {
 		startTime = System.currentTimeMillis();
 
 		// DB作成
-		databaseHelper = new SQLiteOpenHelper(context, DB_NAME, null, 1) {
-			@Override
-			public void onCreate(SQLiteDatabase db) {
-				// None
-			}
-
-			@Override
-			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-				// None
-
-			}
-		};
+		databaseHelper = new DatabaseHelper(context);
 
 		// データベースオブジェクト取得
 		database = databaseHelper.getWritableDatabase();
@@ -79,24 +68,9 @@ public class RepositoryWriter {
 	}
 
 	public void stopLogging() {
-		// 走行記録テーブル作成
-		String sql = "create table " + TABLE_RECORD + " ("
-				+ COLUMN_RECORD_ID + " integer primary key autoincrement, "
-				+ COLUMN_RECORD_DATE_RAW + " integer not null, "
-				+ COLUMN_RECORD_DATE + " text, "
-				+ COLUMN_RECORD_DISTANCE + " integer, "
-				+ COLUMN_RECORD_AVE_SPEED + " real, "
-				+ COLUMN_RECORD_MAX_SPEED + " real)";
-		Log.v("SQL", sql);
-		try {
-			database.execSQL(sql);
-		} catch (Exception e) {
-			Log.v("SQL", e.getMessage());
-		}
-
 		// 走行記録を保存
 		CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getCyclingInfo();
-		String date = new SimpleDateFormat("yyyy/MM/dd").format(startTime);
+		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTime);
 		Log.v("DATE", date);
 
 		try {

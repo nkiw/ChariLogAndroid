@@ -3,30 +3,19 @@ package android.example.iwamin.gpssample.repository;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import static android.example.iwamin.gpssample.repository.SQLConstants.*;
 
 public class RepositoryReader {
-	SQLiteOpenHelper databaseHelper;
+	DatabaseHelper databaseHelper;
 
 	public void dumpRepository(Context context) {
 		// for debug.
 
 		// DB作成
-		databaseHelper = new SQLiteOpenHelper(context, DB_NAME, null, 1) {
-			@Override
-			public void onCreate(SQLiteDatabase db) {
-				// None
-			}
 
-			@Override
-			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-				// None
-
-			}
-		};
+		databaseHelper = new DatabaseHelper(context);
 
 		SQLiteDatabase db;
 		String[] columns = {
@@ -58,15 +47,15 @@ public class RepositoryReader {
 				time = cursor.getLong(1);
 			}
 
-			String tableName = TABLE_GPS_PREFIX + time;
-			Log.d("GPS_TABLE", tableName);
-
-			Cursor cursor_gps = db.query(tableName, columns_gps, null, null, null, null, COLUMN_GPS_TIME);
-			while (cursor_gps.moveToNext()) {
-				Log.d("GPS", "{" + cursor_gps.getLong(0) + ", " + cursor_gps.getDouble(1) + ". "
-						+ cursor_gps.getDouble(2) + ", " + cursor_gps.getDouble(3) + "}");
-
-			}
+//			String tableName = TABLE_GPS_PREFIX + time;
+//			Log.d("GPS_TABLE", tableName);
+//
+//			Cursor cursor_gps = db.query(tableName, columns_gps, null, null, null, null, COLUMN_GPS_TIME);
+//			while (cursor_gps.moveToNext()) {
+//				Log.d("GPS", "{" + cursor_gps.getLong(0) + ", " + cursor_gps.getDouble(1) + ". "
+//						+ cursor_gps.getDouble(2) + ", " + cursor_gps.getDouble(3) + "}");
+//
+//			}
 			db.close();
 
 		} catch (Exception e) {
