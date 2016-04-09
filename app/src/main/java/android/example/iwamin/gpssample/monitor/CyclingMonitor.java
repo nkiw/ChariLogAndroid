@@ -6,7 +6,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 public class CyclingMonitor {
-	private final int SPEED_MEASURE_RANGE = 4;
+	private final int SPEED_MEASURE_RANGE = 5;
 
 	private static CyclingMonitor _instance;
 
@@ -54,7 +54,7 @@ public class CyclingMonitor {
 			}
 
 			// 平均速度を算出
-			info.averageSpeed = (double)info.totalDistance / info.totalTime;
+			info.averageSpeed = 3600.0 * info.totalDistance / info.totalTime;
 		}
 
 		// 新しい位置をリストに登録
@@ -67,10 +67,11 @@ public class CyclingMonitor {
 	private double calculateSpeed(Location current) {
 		// 現在の速度を算出する
 		double speed = 0;
+		int backNum = SPEED_MEASURE_RANGE - 1;	// {backNum}個前の値と比較する
 
-		if (locationList.size() >= SPEED_MEASURE_RANGE) {
-			Location base = locationList.get(locationList.size() - SPEED_MEASURE_RANGE);
-			speed = calculateDistance(base, current) / (current.getTime() - base.getTime());
+		if (locationList.size() >= backNum) {
+			Location base = locationList.get(locationList.size() - backNum);
+			speed = 3600.0 * calculateDistance(base, current) / (current.getTime() - base.getTime());
 		}
 
 		return speed;
