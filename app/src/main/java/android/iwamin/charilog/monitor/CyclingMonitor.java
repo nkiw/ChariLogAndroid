@@ -1,4 +1,4 @@
-package android.example.iwamin.gpssample.monitor;
+package android.iwamin.charilog.monitor;
 
 import android.location.Location;
 import android.util.Log;
