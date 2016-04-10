@@ -77,6 +77,13 @@ public class RecordListActivity extends AppCompatActivity {
 			}
 			table.addView(row);
 		}
+
+//		// for debug.
+//		long condition = list.get(list.size() - 1).getDateRaw();
+//		List<GPSData> listGPSData = new RepositoryReader().getGPSDataList(this, condition);
+//		for (GPSData data : listGPSData) {
+//			Log.v("TEST", data.toString());
+//		}
 	}
 
 }

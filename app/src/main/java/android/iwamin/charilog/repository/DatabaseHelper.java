@@ -7,7 +7,8 @@ import android.util.Log;
 
 import static android.iwamin.charilog.repository.SQLConstants.DB_NAME;
 import static android.iwamin.charilog.repository.SQLConstants.DB_VERSION;
-import static android.iwamin.charilog.repository.SQLConstants.sql_create_record_table;
+import static android.iwamin.charilog.repository.SQLConstants.SQL_CREATE_RECORD_TABLE;
+import static android.iwamin.charilog.repository.SQLConstants.SQL_CREATE_GPS_TABLE;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -18,9 +19,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// 走行記録テーブル作成
-		Log.v("SQL", sql_create_record_table);
+		Log.v("SQL", SQL_CREATE_RECORD_TABLE);
+		Log.v("SQL", SQL_CREATE_GPS_TABLE);
 		try {
-			db.execSQL(sql_create_record_table);
+			db.execSQL(SQL_CREATE_RECORD_TABLE);
+			db.execSQL(SQL_CREATE_GPS_TABLE);
 		} catch (Exception e) {
 			Log.e("SQL", e.getMessage());
 		}

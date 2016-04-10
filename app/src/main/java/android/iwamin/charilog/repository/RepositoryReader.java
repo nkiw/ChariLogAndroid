@@ -4,20 +4,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.iwamin.charilog.entity.CyclingRecord;
+import android.iwamin.charilog.entity.GPSData;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_ALTITUDE;
-import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_LATITUDE;
-import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_LONGITUDE;
-import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_TIME;
-import static android.iwamin.charilog.repository.SQLConstants.COLUMN_RECORD_ID;
-import static android.iwamin.charilog.repository.SQLConstants.RECORD_COLUMNS_STR;
-import static android.iwamin.charilog.repository.SQLConstants.TABLE_RECORD;
-
+import static android.iwamin.charilog.repository.SQLConstants.*;
 import static android.iwamin.charilog.repository.SQLConstants.RECORD_COLUMNS.*;
+import static android.iwamin.charilog.repository.SQLConstants.GPS_DATA_COLUMNS.*;
 
 public class RepositoryReader {
 
@@ -72,10 +67,9 @@ public class RepositoryReader {
 		List<CyclingRecord> list = new ArrayList<>();
 
 		DatabaseHelper databaseHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
 		try {
-			SQLiteDatabase db = databaseHelper.getReadableDatabase();
-
 			Cursor cursor = db.query(TABLE_RECORD, RECORD_COLUMNS_STR, null, null, null, null, COLUMN_RECORD_ID);
 			while (cursor.moveToNext()) {
 				CyclingRecord record = new CyclingRecord(
@@ -91,9 +85,44 @@ public class RepositoryReader {
 				);
 				list.add(record);
 			}
-			db.close();
 		} catch (Exception e) {
 			Log.e("SQL", e.getMessage());
+		} finally {
+			db.close();
+		}
+
+		return list;
+	}
+
+	public List<GPSData> getGPSDataList (Context context, Long condition) {
+		List<GPSData> list = new ArrayList<>();
+
+		DatabaseHelper databaseHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+		try {
+			Cursor cursor;
+			if (condition == null) {
+				cursor = db.query(TABLE_GPS, GPS_DATA_COLUMNS_STR, null, null, null, null, COLUMN_GPS_DATE_RAW);
+			} else {
+				String selection = COLUMN_GPS_DATE_RAW + " = ?";
+				String[] args = new String[]{condition.toString()};
+				cursor = db.query(TABLE_GPS, GPS_DATA_COLUMNS_STR, selection, args, null, null, COLUMN_GPS_DATE_RAW);
+			}
+			while (cursor.moveToNext()) {
+				GPSData data = new GPSData(
+						cursor.getLong(GPS_DATA_DATE_RAW.ordinal()),
+						cursor.getLong(GPS_DATA_TIME.ordinal()),
+						cursor.getDouble(GPS_DATA_LATITUDE.ordinal()),
+						cursor.getDouble(GPS_DATA_LONGITUDE.ordinal()),
+						cursor.getDouble(GPS_DATA_ALTITUDE.ordinal())
+				);
+				list.add(data);
+			}
+		} catch (Exception e) {
+			Log.e("SQL", e.getMessage());
+		} finally {
+			db.close();
 		}
 
 		return list;

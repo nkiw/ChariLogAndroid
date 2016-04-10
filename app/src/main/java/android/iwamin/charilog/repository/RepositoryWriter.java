@@ -31,18 +31,6 @@ public class RepositoryWriter {
 		// データベースオブジェクト取得
 		database = databaseHelper.getWritableDatabase();
 
-		// GPSデータテーブル作成
-		String sql = "create table " + (TABLE_GPS_PREFIX + startTime) + " ("
-				+ COLUMN_GPS_TIME + " integer not null, "
-				+ COLUMN_GPS_LATITUDE + " real not null, "
-				+ COLUMN_GPS_LONGITUDE + " real not null, "
-				+ COLUMN_GPS_ALTITUDE + " real not null)";
-		Log.v("SQL", sql);
-		try {
-			database.execSQL(sql);
-		} catch (Exception e) {
-			Log.e("SQL", e.getMessage());
-		}
 	}
 
 	public void reportLocationChange(Location location) {
@@ -53,12 +41,13 @@ public class RepositoryWriter {
 			database.beginTransaction();
 
 			ContentValues values = new ContentValues();
+			values.put(COLUMN_GPS_DATE_RAW, startTime);
 			values.put(COLUMN_GPS_TIME, location.getTime());
 			values.put(COLUMN_GPS_LATITUDE, location.getLatitude());
 			values.put(COLUMN_GPS_LONGITUDE, location.getLongitude());
 			values.put(COLUMN_GPS_ALTITUDE, location.getAltitude());
 
-			database.insert((TABLE_GPS_PREFIX + startTime), null, values);
+			database.insert(TABLE_GPS, null, values);
 			database.setTransactionSuccessful();
 			database.endTransaction();
 		} catch (Exception e) {
@@ -92,9 +81,8 @@ public class RepositoryWriter {
 			database.endTransaction();
 		} catch (Exception e) {
 			Log.e("SQL", e.getMessage());
+		} finally {
+			database.close();
 		}
-
-		// データベースオブジェクトクローズ
-		database.close();
 	}
 }
