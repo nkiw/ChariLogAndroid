@@ -2,7 +2,6 @@ package android.iwamin.charilog;
 
 import android.app.Service;
 import android.content.Intent;
-import android.iwamin.charilog.repository.RepositoryReader;
 import android.iwamin.charilog.repository.RepositoryWriter;
 import android.location.Location;
 import android.location.LocationListener;
@@ -64,9 +63,6 @@ public class LocationService extends Service implements LocationListener {
 
 		// 記録処理を停止する
 		repositoryWriter.stopLogging();
-
-		// for debug
-		new RepositoryReader().dumpRepository(this);
 	}
 
 	@Override

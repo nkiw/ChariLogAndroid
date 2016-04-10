@@ -3,29 +3,32 @@ package android.iwamin.charilog.repository;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.iwamin.charilog.entity.CyclingRecord;
 import android.util.Log;
 
-import static android.iwamin.charilog.repository.SQLConstants.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_ALTITUDE;
+import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_LATITUDE;
+import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_LONGITUDE;
+import static android.iwamin.charilog.repository.SQLConstants.COLUMN_GPS_TIME;
+import static android.iwamin.charilog.repository.SQLConstants.COLUMN_RECORD_ID;
+import static android.iwamin.charilog.repository.SQLConstants.RECORD_COLUMNS_STR;
+import static android.iwamin.charilog.repository.SQLConstants.TABLE_RECORD;
+
+import static android.iwamin.charilog.repository.SQLConstants.RECORD_COLUMNS.*;
 
 public class RepositoryReader {
-	DatabaseHelper databaseHelper;
 
 	public void dumpRepository(Context context) {
 		// for debug.
 
 		// DB作成
 
-		databaseHelper = new DatabaseHelper(context);
+		DatabaseHelper databaseHelper = new DatabaseHelper(context);
 
 		SQLiteDatabase db;
-		String[] columns = {
-				COLUMN_RECORD_ID,
-				COLUMN_RECORD_DATE_RAW,
-				COLUMN_RECORD_DATE,
-				COLUMN_RECORD_DISTANCE,
-				COLUMN_RECORD_AVE_SPEED,
-				COLUMN_RECORD_MAX_SPEED
-		};
 
 		String[] columns_gps = {
 				COLUMN_GPS_TIME,
@@ -39,8 +42,10 @@ public class RepositoryReader {
 
 			long time = 0;
 
-			Cursor cursor = db.query(TABLE_RECORD, columns, null, null, null, null, COLUMN_RECORD_ID);
+			Cursor cursor = db.query(TABLE_RECORD, RECORD_COLUMNS_STR, null, null, null, null, COLUMN_RECORD_ID);
 			while (cursor.moveToNext()) {
+
+
 				Log.d("RECORD", "{" + cursor.getInt(0) + ", " + cursor.getLong(1) + ". "
 						+ cursor.getString(2) + ", " + cursor.getInt(3) + ", "
 						+ cursor.getDouble(4) + ", " + cursor.getDouble(5) + "}");
@@ -61,5 +66,36 @@ public class RepositoryReader {
 		} catch (Exception e) {
 			Log.e("SQL", e.getMessage());
 		}
+	}
+
+	public List<CyclingRecord> getCyclingRecordList(Context context) {
+		List<CyclingRecord> list = new ArrayList<>();
+
+		DatabaseHelper databaseHelper = new DatabaseHelper(context);
+
+		try {
+			SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+			Cursor cursor = db.query(TABLE_RECORD, RECORD_COLUMNS_STR, null, null, null, null, COLUMN_RECORD_ID);
+			while (cursor.moveToNext()) {
+				CyclingRecord record = new CyclingRecord(
+						cursor.getInt(RECORD_ID.ordinal()),
+						cursor.getLong(RECORD_DATE_RAW.ordinal()),
+						cursor.getString(RECORD_DATE.ordinal()),
+						cursor.getString(RECORD_START_TIME.ordinal()),
+						cursor.getString(RECORD_END_TIME.ordinal()),
+						cursor.getInt(RECORD_TOTAL_TIME.ordinal()),
+						cursor.getInt(RECORD_DISTANCE.ordinal()),
+						cursor.getDouble(RECORD_AVE_SPEED.ordinal()),
+						cursor.getDouble(RECORD_MAX_SPEED.ordinal())
+				);
+				list.add(record);
+			}
+			db.close();
+		} catch (Exception e) {
+			Log.e("SQL", e.getMessage());
+		}
+
+		return list;
 	}
 }

@@ -60,7 +60,6 @@ public class RepositoryWriter {
 
 			database.insert((TABLE_GPS_PREFIX + startTime), null, values);
 			database.setTransactionSuccessful();
-
 			database.endTransaction();
 		} catch (Exception e) {
 			Log.e("SQL", e.getMessage());
@@ -71,6 +70,8 @@ public class RepositoryWriter {
 		// 走行記録を保存
 		CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getCyclingInfo();
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTime);
+		String time = new SimpleDateFormat("HH:mm:ss").format(startTime);
+		String endTime = new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
 		Log.v("DATE", date);
 
 		try {
@@ -79,15 +80,16 @@ public class RepositoryWriter {
 			ContentValues values = new ContentValues();
 			values.put(COLUMN_RECORD_DATE_RAW, startTime);
 			values.put(COLUMN_RECORD_DATE, date);
+			values.put(COLUMN_RECORD_START_TIME, time);
+			values.put(COLUMN_RECORD_END_TIME, endTime);
+			values.put(COLUMN_RECORD_TOTAL_TIME, info.getTotalTime());
 			values.put(COLUMN_RECORD_DISTANCE, info.getTotalDistance());
 			values.put(COLUMN_RECORD_AVE_SPEED, info.getAverageSpeed());
 			values.put(COLUMN_RECORD_MAX_SPEED, info.getMaximumSpeed());
 
 			database.insert(TABLE_RECORD, null, values);
 			database.setTransactionSuccessful();
-
 			database.endTransaction();
-
 		} catch (Exception e) {
 			Log.e("SQL", e.getMessage());
 		}
