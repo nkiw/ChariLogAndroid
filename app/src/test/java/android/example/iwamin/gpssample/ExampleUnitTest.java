@@ -1,4 +1,4 @@
-package android.example.iwamin.gpssample;
+package android.iwamin.charilog;
 
 import org.junit.Test;
 
