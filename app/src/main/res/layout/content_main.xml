@@ -25,9 +25,16 @@
                 android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:text="@string/buttonStop"/>
-
         </TableRow>
     </TableLayout>
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/colorStatus"
+        android:textSize="24dp"/>
 
     <TableLayout
         android:layout_width="match_parent"

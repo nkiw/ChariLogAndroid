@@ -13,9 +13,11 @@ import android.util.Log;
 
 public class LocationService extends Service implements LocationListener {
 	private static final int PERIOD_SAMPLING = 1000;		// サンプリング周期[msec]
+	private static final int GPS_IGNORE_COUNT = 10;			// GPS取得値無視区間[count]
 
 	private RepositoryWriter repositoryWriter;
 	private LocationManager locationManager;
+	private long gpsCount;
 
 	@Override
 	public void onCreate() {
@@ -27,6 +29,7 @@ public class LocationService extends Service implements LocationListener {
 		repositoryWriter.readyLogging(this);
 
 		// GPSの位置取得処理開始
+		gpsCount = 0;
 		locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
 		if (locationManager != null) {
@@ -68,6 +71,12 @@ public class LocationService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
+		gpsCount++;
+		if (gpsCount < GPS_IGNORE_COUNT) {
+			// GPS起動直後はばらつきが大きいため無視する
+			return;
+		}
+
 		repositoryWriter.reportLocationChange(location);
 
 //		Log.v("onLocationChanged", location.toString());

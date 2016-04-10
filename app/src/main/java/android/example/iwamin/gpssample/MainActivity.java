@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
 				if (isExecute == false) {
 					isExecute = true;
 					readyLocationService();        // Locationサービス開始
+
+					TextView tvStatus = (TextView)findViewById(R.id.tv_status);
+					tvStatus.setText(R.string.tv_status);
 				}
 			}
 		});
@@ -65,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
 				if (isExecute == true) {
 					stopLocationService();        // Locationサービス停止
 					isExecute = false;
+
+					TextView tvStatus = (TextView)findViewById(R.id.tv_status);
+					tvStatus.setText("");
 				}
 			}
 		});

@@ -18,4 +18,6 @@
     <string name="tv_current_speed">走行時速：</string>
     <string name="tv_max_speed">最高時速：</string>
     <string name="tv_ave_speed">平均時速：</string>
+
+    <string name="tv_status">記録中...</string>
 </resources>
