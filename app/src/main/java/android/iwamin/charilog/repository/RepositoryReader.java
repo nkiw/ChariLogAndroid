@@ -1,11 +1,11 @@
-package android.example.iwamin.gpssample.repository;
+package android.iwamin.charilog.repository;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import static android.example.iwamin.gpssample.repository.SQLConstants.*;
+import static android.iwamin.charilog.repository.SQLConstants.*;
 
 public class RepositoryReader {
 	DatabaseHelper databaseHelper;

@@ -1,4 +1,4 @@
-package android.example.iwamin.gpssample.repository;
+package android.iwamin.charilog.repository;
 
 public class SQLConstants {
 	// データベース名

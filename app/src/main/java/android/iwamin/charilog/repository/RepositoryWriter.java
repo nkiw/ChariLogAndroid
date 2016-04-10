@@ -1,16 +1,16 @@
-package android.example.iwamin.gpssample.repository;
+package android.iwamin.charilog.repository;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.example.iwamin.gpssample.monitor.CyclingMonitor;
+import android.iwamin.charilog.monitor.CyclingMonitor;
 import android.location.Location;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
 
-import static android.example.iwamin.gpssample.repository.SQLConstants.*;
+import static android.iwamin.charilog.repository.SQLConstants.*;
 
 public class RepositoryWriter {
 	private SQLiteOpenHelper databaseHelper;

@@ -1,9 +1,9 @@
-package android.example.iwamin.gpssample;
+package android.iwamin.charilog;
 
 import android.app.Service;
 import android.content.Intent;
-import android.example.iwamin.gpssample.repository.RepositoryReader;
-import android.example.iwamin.gpssample.repository.RepositoryWriter;
+import android.iwamin.charilog.repository.RepositoryReader;
+import android.iwamin.charilog.repository.RepositoryWriter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;

@@ -1,9 +1,9 @@
-package android.example.iwamin.gpssample;
+package android.iwamin.charilog;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.example.iwamin.gpssample.monitor.CyclingMonitor;
+import android.iwamin.charilog.monitor.CyclingMonitor;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
