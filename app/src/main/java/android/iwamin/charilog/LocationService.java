@@ -13,7 +13,7 @@ import android.util.Log;
 
 public class LocationService extends Service implements LocationListener {
 	private static final int PERIOD_SAMPLING = 1000;		// サンプリング周期[msec]
-	private static final int GPS_IGNORE_COUNT = 10;			// GPS取得値無視区間[count]
+	private static final int GPS_IGNORE_COUNT = 3;			// GPS取得値無視区間[count]
 
 	private RepositoryWriter repositoryWriter;
 	private LocationManager locationManager;

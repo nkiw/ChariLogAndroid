@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 	TextView tvCurrentSpeed;
 	TextView tvMaximumSpeed;
 	TextView tvAverageSpeed;
+	TextView tvStatus;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
 				if (isExecute == false) {
 					isExecute = true;
 					readyLocationService();        // Locationサービス開始
-
-					TextView tvStatus = (TextView)findViewById(R.id.tv_status);
-					tvStatus.setText(R.string.tv_status);
 				}
 			}
 		});
@@ -68,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
 				if (isExecute == true) {
 					stopLocationService();        // Locationサービス停止
 					isExecute = false;
-
-					TextView tvStatus = (TextView)findViewById(R.id.tv_status);
-					tvStatus.setText("");
 				}
 			}
 		});
@@ -89,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 		tvCurrentSpeed = (TextView)findViewById(R.id.tv_current_speed_val);
 		tvMaximumSpeed = (TextView)findViewById(R.id.tv_max_speed_val);
 		tvAverageSpeed = (TextView)findViewById(R.id.tv_ave_speed_val);
+		tvStatus = (TextView)findViewById(R.id.tv_status);
 	}
 
 	@Override
@@ -172,11 +169,15 @@ public class MainActivity extends AppCompatActivity {
 	private void startLocationService() {
 		Intent intent = new Intent(this, LocationService.class);
 		startService(intent);
+
+		tvStatus.setText(R.string.tv_status);
 	}
 
 	private void stopLocationService() {
 		Intent intent = new Intent(this, LocationService.class);
 		stopService(intent);
+
+		tvStatus.setText("");
 	}
 
 	private TimerTask timerTask = new TimerTask() {
