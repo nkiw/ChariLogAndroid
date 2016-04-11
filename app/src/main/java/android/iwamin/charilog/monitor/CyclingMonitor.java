@@ -4,6 +4,7 @@ import android.location.Location;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CyclingMonitor {
 	private final int SPEED_MEASURE_RANGE = 5;
@@ -12,12 +13,12 @@ public class CyclingMonitor {
 
 	private CyclingInfo info = new CyclingInfo();
 
-	private ArrayList<Location> locationList = new ArrayList<>();
+	private List<Location> locationList = new ArrayList<>();
 
 	private CyclingMonitor() {
 	}
 
-	synchronized public static CyclingMonitor getInstance() {
+	public synchronized static CyclingMonitor getInstance() {
 		if (_instance == null) {
 			_instance = new CyclingMonitor();
 		}
@@ -28,12 +29,12 @@ public class CyclingMonitor {
 		return info;
 	}
 
-	synchronized public void reset() {
+	public synchronized void reset() {
 		locationList.clear();
 		info.reset();
 	}
 
-	synchronized public void reportLocationChange(Location location) {
+	public synchronized void reportLocationChange(Location location) {
 		if (locationList.isEmpty()) {
 			// 初回登録時の時刻を記録する
 			info.startTime = location.getTime();

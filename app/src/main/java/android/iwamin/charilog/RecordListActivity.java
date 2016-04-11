@@ -11,6 +11,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,13 +36,13 @@ public class RecordListActivity extends AppCompatActivity {
 		List<String> items = new ArrayList<>();
 		items.add("ID");
 //		items.add("Time(Raw)");
-		items.add("Date");
-		items.add("Start-time");
+		items.add("日付");
+		items.add("時刻");
 //		items.add("End Time");
-		items.add("Total-time");
-		items.add("Distance");
-		items.add("A.speed");
-		items.add("M.speed");
+		items.add("走行時間");
+		items.add("走行距離");
+		items.add("平均速度");
+		items.add("最高速度");
 
 		TableRow head = new TableRow(this);
 		for (String item : items) {
@@ -61,13 +62,13 @@ public class RecordListActivity extends AppCompatActivity {
 			columns.add(String.valueOf(record.getId()));
 //			columns.add(String.valueOf(record.getDateRaw()));
 			columns.add(record.getDate());
-			columns.add(record.getStartTime());
+			columns.add(new SimpleDateFormat("HH:mm").format(record.getDateRaw()));
 //			columns.add(record.getEndTime());
 			int time[] = CommonLib.msecToHourMinSec(record.getTotalTime());
 			columns.add(String.format("%02d:%02d:%02d", time[0], time[1], time[2]));
-			columns.add(String.format("%.3f", (double)record.getDistance() / 1000) + "[km]");
-			columns.add(String.format("%.1f", record.getAveSpeed()));
-			columns.add(String.format("%.1f", record.getMaxSpeed()));
+			columns.add(String.format("%.3f", (double)record.getDistance() / 1000) + "km");
+			columns.add(String.format("%.1f", record.getAveSpeed()) + "km/h");
+			columns.add(String.format("%.1f", record.getMaxSpeed()) + "km/h");
 
 			for (String column : columns) {
 				TextView view = new TextView(this);

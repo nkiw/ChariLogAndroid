@@ -3,6 +3,7 @@ package android.iwamin.charilog;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.iwamin.charilog.lib.CommonLib;
 import android.iwamin.charilog.monitor.CyclingMonitor;
 import android.location.Location;
 import android.os.Build;
@@ -199,40 +200,40 @@ public class MainActivity extends AppCompatActivity {
 			CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getCyclingInfo();
 			Location location = info.getLocation();
 
-			if (location != null) {
-				// GPSデータの表示
-				tvTime.setText(String.valueOf(location.getTime()));
-				tvLatitude.setText(String.valueOf(location.getLatitude()));
-				tvLongitude.setText(String.valueOf(location.getLongitude()));
-				tvAltitude.setText(String.valueOf(location.getAltitude()));
-
-				// 走行状況の表示
-				long hour = info.getTotalTime() / 1000 / 3600;
-				long minute = (info.getTotalTime() / 1000 / 60) - (hour * 60);
-				long second = (info.getTotalTime() / 1000) - (hour * 3600) - (minute * 60);
-				String stringTime = "";
-				if (hour > 0) {
-					stringTime = hour + "時間" + minute + "分" + second + "秒";
-				} else if (minute > 0) {
-					stringTime = minute + "分" + second + "秒";
-				} else {
-					stringTime = second + "秒";
-				}
-
-				int distance = info.getTotalDistance();
-				String stringDistance;
-				if (distance >= 1000) {
-					stringDistance = ((double)distance / 1000) + " [km]";
-				} else {
-					stringDistance = distance + " [m]";
-				}
-
-				tvTotalTime.setText(stringTime);
-				tvTotalDistance.setText(stringDistance);
-				tvCurrentSpeed.setText(String.format("%.1f", info.getCurrentSpeed()) + "[km/h]");
-				tvMaximumSpeed.setText(String.format("%.1f", info.getMaximumSpeed()) + "[km/h]");
-				tvAverageSpeed.setText(String.format("%.1f", info.getAverageSpeed()) + "[km/h]");
+			if (location == null) {
+				return;
 			}
+
+			// GPSデータの表示
+			tvTime.setText(String.valueOf(location.getTime()));
+			tvLatitude.setText(String.valueOf(location.getLatitude()));
+			tvLongitude.setText(String.valueOf(location.getLongitude()));
+			tvAltitude.setText(String.valueOf(location.getAltitude()));
+
+			// 走行状況の表示
+			int[] time = CommonLib.msecToHourMinSec(info.getTotalTime());
+			String stringTime = "";
+			if (time[0] > 0) {
+				stringTime = time[0] + "時間" + time[1] + "分" + time[2] + "秒";
+			} else if (time[1] > 0) {
+				stringTime = time[1] + "分" + time[2] + "秒";
+			} else {
+				stringTime = time[2] + "秒";
+			}
+
+			int distance = info.getTotalDistance();
+			String stringDistance;
+			if (distance >= 1000) {
+				stringDistance = ((double) distance / 1000) + " [km]";
+			} else {
+				stringDistance = distance + " [m]";
+			}
+
+			tvTotalTime.setText(stringTime);
+			tvTotalDistance.setText(stringDistance);
+			tvCurrentSpeed.setText(String.format("%.1f", info.getCurrentSpeed()) + "[km/h]");
+			tvMaximumSpeed.setText(String.format("%.1f", info.getMaximumSpeed()) + "[km/h]");
+			tvAverageSpeed.setText(String.format("%.1f", info.getAverageSpeed()) + "[km/h]");
 		}
 	};
 }
