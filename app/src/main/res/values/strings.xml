@@ -23,4 +23,6 @@
 
     <string name="tv_status">記録中...</string>
     <string name="title_activity_record_list">走行記録一覧</string>
+    <string name="tv_del_id">ID: </string>
+    <string name="button_del">削除</string>
 </resources>

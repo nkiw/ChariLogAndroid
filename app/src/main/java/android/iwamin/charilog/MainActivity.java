@@ -142,6 +142,11 @@ public class MainActivity extends AppCompatActivity {
 
 		if (id == R.id.action_record_list) {
 			Intent intent = new Intent(this, RecordListActivity.class);
+			if (isExecute) {
+				intent.putExtra("IS_EXE", true);
+			} else {
+				intent.putExtra("IS_EXE", false);
+			}
 			startActivity(intent);
 			return true;
 		}

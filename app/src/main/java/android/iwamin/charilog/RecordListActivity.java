@@ -7,15 +7,20 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecordListActivity extends AppCompatActivity {
+	RepositoryReader repositoryReader;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,14 +29,42 @@ public class RecordListActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
+		final Bundle extras = getIntent().getExtras();
+		repositoryReader = new RepositoryReader();
+
+		// 削除ボタンのクリックリスナー設定
+		Button buttonDel = (Button)findViewById(R.id.button_del);
+		buttonDel.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				boolean isExecute = (extras != null) ? extras.getBoolean("IS_EXE") : false;
+
+				if (isExecute) {
+					Toast.makeText(RecordListActivity.this, "実行中は削除できません", Toast.LENGTH_SHORT).show();
+				} else {
+					EditText editText = (EditText) findViewById(R.id.et_del_id);
+					String idStr = editText.getText().toString();
+					if (!idStr.equals("")) {
+						int id = Integer.parseInt(editText.getText().toString());
+						if (id > 0) {
+							repositoryReader.deleteCyclingRecord(RecordListActivity.this, id);
+						}
+					}
+					editText.setText("");
+					showCyclingRecordList();
+				}
+			}
+		});
+
 		// 走行記録一覧を表示する
 		showCyclingRecordList();
 	}
 
 	private void showCyclingRecordList() {
-		List<CyclingRecord> list = new RepositoryReader().getCyclingRecordList(this);
+		List<CyclingRecord> list = repositoryReader.getCyclingRecordList(this);
 
 		TableLayout table = (TableLayout)findViewById(R.id.tbl_list_record);
+		table.removeAllViews();
 
 		List<String> items = new ArrayList<>();
 		items.add("ID");

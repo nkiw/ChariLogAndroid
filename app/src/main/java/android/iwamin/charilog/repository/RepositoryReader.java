@@ -127,4 +127,35 @@ public class RepositoryReader {
 
 		return list;
 	}
+
+	public boolean deleteCyclingRecord(Context context, int id) {
+		final String[] columns = {COLUMN_RECORD_ID, COLUMN_RECORD_DATE_RAW};
+		String[] selectionArgs = {String.valueOf(id)};
+
+		DatabaseHelper databaseHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+		boolean ret = false;
+
+		try {
+			Cursor cursorRecord = db.query(TABLE_RECORD, columns, COLUMN_RECORD_ID + " = ?", selectionArgs, null, null, null);
+
+			if (cursorRecord.getCount() != 0) {
+				while (cursorRecord.moveToNext()) {
+					String[] whereArgs = {String.valueOf(cursorRecord.getLong(1))};
+
+					db.delete(TABLE_RECORD, COLUMN_RECORD_ID + " = ?", selectionArgs);
+					int num = db.delete(TABLE_GPS, COLUMN_GPS_DATE_RAW + " = ?", whereArgs);
+					Log.v("GPS_DEL", String.valueOf(num));
+
+					ret = true;
+				}
+			}
+		} catch(Exception e) {
+			Log.e("SQL", e.getMessage());
+		} finally {
+			db.close();
+		}
+
+		return ret;
+	}
 }
