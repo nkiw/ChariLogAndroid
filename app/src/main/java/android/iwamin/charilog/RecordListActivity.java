@@ -2,10 +2,12 @@ package android.iwamin.charilog;
 
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
+import android.iwamin.charilog.network.ServerSyncronizer;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -55,6 +57,18 @@ public class RecordListActivity extends AppCompatActivity {
 				}
 			}
 		});
+
+		Button buttonSync = (Button)findViewById(R.id.button_sync);
+		buttonSync.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EditText editText = (EditText)findViewById(R.id.et_server_url);
+				String url = editText.getText().toString();
+				Log.v("URL:", url);
+				ServerSyncronizer.getInstance().synchronize(RecordListActivity.this, url);
+			}
+		});
+
 
 		// 走行記録一覧を表示する
 		showCyclingRecordList();

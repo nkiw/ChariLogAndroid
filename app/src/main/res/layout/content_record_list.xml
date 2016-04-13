@@ -33,6 +33,26 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_server_url"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:inputType="textUri"
+            android:hint="@string/hint_input_url"/>
+
+        <Button
+            android:id="@+id/button_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_sync"/>
+
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
