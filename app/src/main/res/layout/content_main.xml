@@ -12,11 +12,11 @@
         android:layout_below="@+id/toolbar"
         android:orientation="vertical">
 
+        <!--ボタン-->
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!--ボタン-->
             <TableRow>
                 <Button
                     android:id="@+id/buttonStart"
@@ -32,13 +32,39 @@
             </TableRow>
         </TableLayout>
 
+        <!--動作状態表示-->
         <TextView
             android:id="@+id/tv_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:textColor="@color/colorStatus"
             android:textSize="24dp"/>
+
+        <!--位置精度設定-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_accuracy_range"/>
+
+            <EditText
+                android:id="@+id/et_accuracy"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:inputType="numberDecimal"
+                android:text="@string/et_accuracy_default"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_unit"/>
+
+        </LinearLayout>
 
         <TableLayout
             android:layout_width="match_parent"
@@ -99,6 +125,19 @@
 
                 <TextView
                     android:id="@+id/tv_altitude_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_default_val"/>
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_accuracy"/>
+
+                <TextView
+                    android:id="@+id/tv_accuracy_val"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/tv_default_val"/>
@@ -180,4 +219,5 @@
         </TableLayout>
 
     </LinearLayout>
+
 </ScrollView>

@@ -19,9 +19,6 @@ public class RepositoryWriter {
 	private long startTime;
 
 	public void readyLogging(Context context) {
-		// 走行モニターを初期化
-		CyclingMonitor.getInstance().reset();
-
 		// 開始時刻を記録
 		startTime = System.currentTimeMillis();
 
@@ -34,8 +31,6 @@ public class RepositoryWriter {
 	}
 
 	public void reportLocationChange(Location location) {
-		CyclingMonitor.getInstance().reportLocationChange(location);
-
 		// 位置情報をデータベースに記録
 		try {
 			database.beginTransaction();

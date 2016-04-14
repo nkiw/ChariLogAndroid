@@ -15,7 +15,17 @@ public class CyclingMonitor {
 
 	private List<Location> locationList = new ArrayList<>();
 
+	private float accuracy;
+
 	private CyclingMonitor() {
+	}
+
+	public float getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(float accuracy) {
+		this.accuracy = accuracy;
 	}
 
 	public synchronized static CyclingMonitor getInstance() {

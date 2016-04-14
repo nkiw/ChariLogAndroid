@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 	TextView tvLatitude;
 	TextView tvLongitude;
 	TextView tvAltitude;
+	TextView tvAccuracy;
 	TextView tvTotalTime;
 	TextView tvTotalDistance;
 	TextView tvCurrentSpeed;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 		tvLatitude = (TextView)findViewById(R.id.tv_latitude_val);
 		tvLongitude = (TextView)findViewById(R.id.tv_longitude_val);
 		tvAltitude = (TextView)findViewById(R.id.tv_altitude_val);
+		tvAccuracy = (TextView)findViewById(R.id.tv_accuracy_val);
 		tvTotalTime = (TextView)findViewById(R.id.tv_total_time_val);
 		tvTotalDistance = (TextView)findViewById(R.id.tv_total_distance_val);
 		tvCurrentSpeed = (TextView)findViewById(R.id.tv_current_speed_val);
@@ -175,7 +178,17 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void startLocationService() {
+		EditText editTextAccuracy = (EditText)findViewById(R.id.et_accuracy);
+		String text = editTextAccuracy.getText().toString();
+		int accuracy;
+		try {
+			accuracy = Integer.parseInt(text);
+		} catch (Exception e) {
+			accuracy = 20;
+		}
+
 		Intent intent = new Intent(this, LocationService.class);
+		intent.putExtra("ACCURACY", accuracy);
 		startService(intent);
 
 		tvStatus.setText(R.string.tv_status);
@@ -210,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
 			tvLatitude.setText(String.valueOf(location.getLatitude()));
 			tvLongitude.setText(String.valueOf(location.getLongitude()));
 			tvAltitude.setText(String.valueOf(location.getAltitude()));
+			tvAccuracy.setText(String.valueOf(CyclingMonitor.getInstance().getAccuracy()));
 
 			// 走行状況の表示
 			int[] time = CommonLib.msecToHourMinSec(info.getTotalTime());

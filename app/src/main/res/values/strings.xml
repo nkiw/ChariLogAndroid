@@ -27,4 +27,9 @@
     <string name="button_del">削除</string>
     <string name="button_sync">同期</string>
     <string name="hint_input_url">サーバーのURL</string>
+
+    <string name="tv_accuracy">精度(Accuracy):</string>
+    <string name="tv_unit">m以内</string>
+    <string name="et_accuracy_default">15</string>
+    <string name="tv_accuracy_range">位置精度の許容範囲(Accuracy):</string>
 </resources>
