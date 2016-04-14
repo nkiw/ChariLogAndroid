@@ -2,7 +2,7 @@ package android.iwamin.charilog;
 
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
-import android.iwamin.charilog.network.ServerSyncronizer;
+import android.iwamin.charilog.network.WebController;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +24,12 @@ import java.util.List;
 public class RecordListActivity extends AppCompatActivity {
 	RepositoryReader repositoryReader;
 
+	EditText editTextUrl;
+	EditText editTextUserId;
+	EditText editTextPassword;
+
+	WebController webController = WebController.getInstance();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,6 +39,10 @@ public class RecordListActivity extends AppCompatActivity {
 
 		final Bundle extras = getIntent().getExtras();
 		repositoryReader = new RepositoryReader();
+
+		editTextUrl = (EditText)findViewById(R.id.et_server_url);
+		editTextUserId = (EditText)findViewById(R.id.et_user_id);
+		editTextPassword = (EditText)findViewById(R.id.et_password);
 
 		// 削除ボタンのクリックリスナー設定
 		Button buttonDel = (Button)findViewById(R.id.button_del);
@@ -58,6 +68,30 @@ public class RecordListActivity extends AppCompatActivity {
 			}
 		});
 
+		// ユーザー作成ボタンのクリックリスナー設定
+		Button buttonUserCreate = (Button)findViewById(R.id.button_user_create);
+		buttonUserCreate.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String url = editTextUrl.getText().toString();
+				String userId = editTextUserId.getText().toString();
+				String password = editTextPassword.getText().toString();
+
+				if (url.equals("")) {
+					Toast.makeText(RecordListActivity.this,
+							"URLが入力されていません", Toast.LENGTH_SHORT).show();
+				} else if (userId.equals("")) {
+					Toast.makeText(RecordListActivity.this,
+							"ユーザーIDが入力されていません", Toast.LENGTH_SHORT).show();
+				} else if (password.equals("")) {
+					Toast.makeText(RecordListActivity.this,
+							"パスワードが入力されていません", Toast.LENGTH_SHORT).show();
+				} else {
+					webController.createUser(url, userId, password);
+				}
+			}
+		});
+
 		Button buttonSync = (Button)findViewById(R.id.button_sync);
 		buttonSync.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -65,7 +99,7 @@ public class RecordListActivity extends AppCompatActivity {
 				EditText editText = (EditText)findViewById(R.id.et_server_url);
 				String url = editText.getText().toString();
 				Log.v("URL:", url);
-				ServerSyncronizer.getInstance().synchronize(RecordListActivity.this, url);
+				webController.synchronize(RecordListActivity.this, url);
 			}
 		});
 
