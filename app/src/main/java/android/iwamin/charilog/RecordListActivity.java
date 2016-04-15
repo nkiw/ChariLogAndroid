@@ -1,5 +1,6 @@
 package android.iwamin.charilog;
 
+import android.content.SharedPreferences;
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
 import android.iwamin.charilog.network.WebController;
@@ -21,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.iwamin.charilog.preference.PreferenceCconstants.*;
+
 public class RecordListActivity extends AppCompatActivity {
 	RepositoryReader repositoryReader;
 
@@ -30,6 +33,8 @@ public class RecordListActivity extends AppCompatActivity {
 
 	WebController webController = WebController.getInstance();
 
+	SharedPreferences preferences;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,12 +42,19 @@ public class RecordListActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
+		// インテント
 		final Bundle extras = getIntent().getExtras();
 		repositoryReader = new RepositoryReader();
 
 		editTextUrl = (EditText)findViewById(R.id.et_server_url);
 		editTextUserId = (EditText)findViewById(R.id.et_user_id);
 		editTextPassword = (EditText)findViewById(R.id.et_password);
+
+		// プリファレンスからサーバーURL、ユーザーID、パスワードを読み出す
+		preferences	= getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
+		editTextUrl.setText(preferences.getString(PREFERENCE_KEY_URL, ""));
+		editTextUserId.setText(preferences.getString(PREFERENCE_KEY_USER_ID, ""));
+		editTextPassword.setText(preferences.getString(PREFERENCE_KEY_PASSWORD, ""));
 
 		// 削除ボタンのクリックリスナー設定
 		Button buttonDel = (Button)findViewById(R.id.button_del);
@@ -87,6 +99,13 @@ public class RecordListActivity extends AppCompatActivity {
 					Toast.makeText(RecordListActivity.this,
 							"パスワードが入力されていません", Toast.LENGTH_SHORT).show();
 				} else {
+					// プリファレンスにサーバーURL、ユーザーID、パスワードを記憶する
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.putString(PREFERENCE_KEY_URL, url);
+					editor.putString(PREFERENCE_KEY_USER_ID, userId);
+					editor.putString(PREFERENCE_KEY_PASSWORD, password);
+					editor.commit();
+
 					webController.createUser(url, userId, password);
 				}
 			}
