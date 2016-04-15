@@ -84,7 +84,34 @@ public class HttpCommunicator {
 					out.close();
 				}
 			}
-			response = new HttpResponse(con.getResponseCode(), con.getResponseMessage(), "");
+
+			InputStream in = null;
+			InputStreamReader inStreamReader = null;
+			BufferedReader reader = null;
+			StringBuilder sb = new StringBuilder();
+			try {
+				in = con.getInputStream();
+				inStreamReader = new InputStreamReader(in);
+				reader = new BufferedReader(inStreamReader);
+
+				String line;
+				while ((line = reader.readLine()) != null) {
+					sb.append(line);
+				}
+			} catch (IOException e) {
+				Log.e("DO_GET1", e.getMessage());
+			} finally {
+				if (reader != null) {
+					reader.close();
+				}
+				if (inStreamReader != null) {
+					inStreamReader.close();
+				}
+				if (in != null) {
+					in.close();
+				}
+			}
+			response = new HttpResponse(con.getResponseCode(), con.getResponseMessage(), sb.toString());
 		} catch (IOException e) {
 			Log.e("DO_POST2", e.getMessage());
 		} finally {
