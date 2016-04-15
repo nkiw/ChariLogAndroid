@@ -2,8 +2,9 @@ package android.iwamin.charilog.network;
 
 import android.content.Context;
 import android.iwamin.charilog.entity.CyclingRecord;
-import android.iwamin.charilog.network.param.CyclingRecordPostTaskParam;
-import android.iwamin.charilog.network.param.UserCreatePostTaskParam;
+import android.iwamin.charilog.network.param.GetRequestCyclingRecord;
+import android.iwamin.charilog.network.param.PostRequestCyclingRecord;
+import android.iwamin.charilog.network.param.PostRequestUserCreate;
 import android.iwamin.charilog.network.task.CyclingRecordGetTask;
 import android.iwamin.charilog.network.task.CyclingRecordPostTask;
 import android.iwamin.charilog.network.task.UserCreatePostTask;
@@ -37,19 +38,22 @@ public class WebController {
 			// POST
 			List<CyclingRecord> list = new RepositoryReader().getCyclingRecordList(context);
 			for (CyclingRecord record : list) {
-				CyclingRecordPostTaskParam param = new CyclingRecordPostTaskParam();
+				PostRequestCyclingRecord param = new PostRequestCyclingRecord();
+				param.setUserId("nobi");
+				param.setDeviceId("nobi_device");
 				param.setUrl(url);
 				param.setRecord(record);
-				AsyncTask<CyclingRecordPostTaskParam, Void, String> postTask
+				AsyncTask<PostRequestCyclingRecord, Void, String> postTask
 						= new CyclingRecordPostTask().execute(param);
 				String response = postTask.get();
 			}
 
 			// GET
-			AsyncTask<URL, Void, String> getTask = new CyclingRecordGetTask().execute(url);
-			String jsonBody = getTask.get().toString();
-			Log.v("RES", jsonBody);
-
+			GetRequestCyclingRecord param = new GetRequestCyclingRecord(url);
+			AsyncTask<GetRequestCyclingRecord, Void, String> getTask
+					= new CyclingRecordGetTask().execute(param);
+			String jsonBody = getTask.get();
+			System.out.println(jsonBody);
 		} catch(Exception e) {
 			Log.e("HTTP", e.getMessage());
 		} finally {
@@ -71,16 +75,18 @@ public class WebController {
 //			Log.v("CIPHER", sb.toString());
 
 			// サーバーに送信
-			UserCreatePostTaskParam param = new UserCreatePostTaskParam(
+			PostRequestUserCreate param = new PostRequestUserCreate(
 					testUrl,
 					userId,
 					sb.toString()
 			);
-			AsyncTask<UserCreatePostTaskParam, Void, String> postTask
+			AsyncTask<PostRequestUserCreate, Void, String> postTask
 					= new UserCreatePostTask().execute(param);
 
-			// 受信データ確認
-			Log.v("CRE_USER", postTask.get());
+			if (postTask != null) {
+				// 受信データ確認
+				Log.v("CRE_USER", postTask.get());
+			}
 		} catch (Exception e) {
 			Log.e("CRE_USER", e.getMessage());
 		}

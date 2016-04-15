@@ -7,8 +7,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor(suppressConstructorProperties = true)
-public class UserCreatePostTaskParam {
+public class GetRequestCyclingRecord {
 	private URL url;
-	private String userId;
-	private String password;
 }
