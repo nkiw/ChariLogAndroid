@@ -6,26 +6,24 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class CyclingMonitor {
 	private final int SPEED_MEASURE_RANGE = 5;
 
 	private static CyclingMonitor _instance;
 
+	@Getter
 	private CyclingInfo info = new CyclingInfo();
 
 	private List<Location> locationList = new ArrayList<>();
 
+	@Getter
+	@Setter
 	private float accuracy;
 
 	private CyclingMonitor() {
-	}
-
-	public float getAccuracy() {
-		return accuracy;
-	}
-
-	public void setAccuracy(float accuracy) {
-		this.accuracy = accuracy;
 	}
 
 	public synchronized static CyclingMonitor getInstance() {
@@ -33,10 +31,6 @@ public class CyclingMonitor {
 			_instance = new CyclingMonitor();
 		}
 		return _instance;
-	}
-
-	public CyclingInfo getCyclingInfo() {
-		return info;
 	}
 
 	public synchronized void reset() {
@@ -104,12 +98,19 @@ public class CyclingMonitor {
 	}
 
 	public class CyclingInfo {
+		@Getter
 		Location location;		// 現在の位置情報
+		@Getter
 		long startTime;			// 記録開始時刻[msec]
+		@Getter
 		long totalTime;			// 経過時間[msec]
+		@Getter
 		int totalDistance;		// トータル移動距離[m]
+		@Getter
 		double averageSpeed;	// 平均速度[km/h]
+		@Getter
 		double currentSpeed;	// 現在の速度[km/h]
+		@Getter
 		double maximumSpeed;	// 最高速度[km/h]
 
 		public void reset() {
@@ -120,30 +121,6 @@ public class CyclingMonitor {
 			averageSpeed = 0.0;
 			currentSpeed = 0.0;
 			maximumSpeed = 0.0;
-		}
-
-		public double getAverageSpeed() {
-			return averageSpeed;
-		}
-
-		public double getCurrentSpeed() {
-			return currentSpeed;
-		}
-
-		public Location getLocation() {
-			return location;
-		}
-
-		public double getMaximumSpeed() {
-			return maximumSpeed;
-		}
-
-		public int getTotalDistance() {
-			return totalDistance;
-		}
-
-		public long getTotalTime() {
-			return totalTime;
 		}
 
 		@Override

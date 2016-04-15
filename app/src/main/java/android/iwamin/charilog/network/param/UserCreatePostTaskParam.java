@@ -1,4 +1,4 @@
-package android.iwamin.charilog.network;
+package android.iwamin.charilog.network.param;
 
 import java.net.URL;
 

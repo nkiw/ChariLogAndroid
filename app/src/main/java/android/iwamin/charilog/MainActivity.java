@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getCyclingInfo();
+			CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getInfo();
 			Location location = info.getLocation();
 
 			if (location == null) {

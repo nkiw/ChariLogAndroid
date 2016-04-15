@@ -52,7 +52,7 @@ public class RepositoryWriter {
 
 	public void stopLogging() {
 		// 走行記録を保存
-		CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getCyclingInfo();
+		CyclingMonitor.CyclingInfo info = CyclingMonitor.getInstance().getInfo();
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTime);
 		String time = new SimpleDateFormat("HH:mm:ss").format(startTime);
 		String endTime = new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());

@@ -1,5 +1,6 @@
-package android.iwamin.charilog.network;
+package android.iwamin.charilog.network.task;
 
+import android.iwamin.charilog.network.param.UserCreatePostTaskParam;
 import android.os.AsyncTask;
 import android.util.Log;
 

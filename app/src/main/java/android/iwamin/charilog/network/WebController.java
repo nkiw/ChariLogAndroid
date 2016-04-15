@@ -2,6 +2,11 @@ package android.iwamin.charilog.network;
 
 import android.content.Context;
 import android.iwamin.charilog.entity.CyclingRecord;
+import android.iwamin.charilog.network.param.CyclingRecordPostTaskParam;
+import android.iwamin.charilog.network.param.UserCreatePostTaskParam;
+import android.iwamin.charilog.network.task.CyclingRecordGetTask;
+import android.iwamin.charilog.network.task.CyclingRecordPostTask;
+import android.iwamin.charilog.network.task.UserCreatePostTask;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.AsyncTask;
 import android.util.Log;

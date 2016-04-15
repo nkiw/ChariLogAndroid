@@ -1,4 +1,4 @@
-package android.iwamin.charilog.network;
+package android.iwamin.charilog.network.task;
 
 import android.os.AsyncTask;
 import android.util.Log;
