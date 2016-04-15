@@ -36,4 +36,6 @@
     <string name="hint_user_id">ユーザーID:</string>
     <string name="hint_password">パスワード:</string>
     <string name="button_user_create">ユーザー作成</string>
+    <string name="hint_et_device_id">デバイスID:</string>
+    <string name="button_model_name">端末名を使用</string>
 </resources>

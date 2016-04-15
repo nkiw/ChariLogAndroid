@@ -1,9 +1,12 @@
 package android.iwamin.charilog;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
+import android.iwamin.charilog.network.ConnectionInfo;
 import android.iwamin.charilog.network.WebController;
+import android.iwamin.charilog.network.http.HttpResponse;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +21,16 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.iwamin.charilog.preference.PreferenceCconstants.*;
+import static android.iwamin.charilog.preference.PreferenceCconstants.PREFERENCE_FILE_NAME;
+import static android.iwamin.charilog.preference.PreferenceCconstants.PREFERENCE_KEY_DEVICE_ID;
+import static android.iwamin.charilog.preference.PreferenceCconstants.PREFERENCE_KEY_PASSWORD;
+import static android.iwamin.charilog.preference.PreferenceCconstants.PREFERENCE_KEY_URL;
+import static android.iwamin.charilog.preference.PreferenceCconstants.PREFERENCE_KEY_USER_ID;
 
 public class RecordListActivity extends AppCompatActivity {
 	RepositoryReader repositoryReader;
@@ -30,6 +38,7 @@ public class RecordListActivity extends AppCompatActivity {
 	EditText editTextUrl;
 	EditText editTextUserId;
 	EditText editTextPassword;
+	EditText editTextDeviceId;
 
 	WebController webController = WebController.getInstance();
 
@@ -49,12 +58,18 @@ public class RecordListActivity extends AppCompatActivity {
 		editTextUrl = (EditText)findViewById(R.id.et_server_url);
 		editTextUserId = (EditText)findViewById(R.id.et_user_id);
 		editTextPassword = (EditText)findViewById(R.id.et_password);
+		editTextDeviceId = (EditText)findViewById(R.id.et_device_id);
 
 		// プリファレンスからサーバーURL、ユーザーID、パスワードを読み出す
 		preferences	= getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
 		editTextUrl.setText(preferences.getString(PREFERENCE_KEY_URL, ""));
 		editTextUserId.setText(preferences.getString(PREFERENCE_KEY_USER_ID, ""));
 		editTextPassword.setText(preferences.getString(PREFERENCE_KEY_PASSWORD, ""));
+		String deviceId = preferences.getString(PREFERENCE_KEY_DEVICE_ID, "");
+		if (deviceId.equals("")) {
+			deviceId = android.os.Build.MODEL;	// デフォルト値として端末名を使用
+		}
+		editTextDeviceId.setText(deviceId);
 
 		// 削除ボタンのクリックリスナー設定
 		Button buttonDel = (Button)findViewById(R.id.button_del);
@@ -85,43 +100,51 @@ public class RecordListActivity extends AppCompatActivity {
 		buttonUserCreate.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String url = editTextUrl.getText().toString();
-				String userId = editTextUserId.getText().toString();
-				String password = editTextPassword.getText().toString();
+				ConnectionInfo info = getConnectionInfo();
+				if (info != null) {
+					HttpResponse response = webController.createUser(info);
 
-				if (url.equals("")) {
-					Toast.makeText(RecordListActivity.this,
-							"URLが入力されていません", Toast.LENGTH_SHORT).show();
-				} else if (userId.equals("")) {
-					Toast.makeText(RecordListActivity.this,
-							"ユーザーIDが入力されていません", Toast.LENGTH_SHORT).show();
-				} else if (password.equals("")) {
-					Toast.makeText(RecordListActivity.this,
-							"パスワードが入力されていません", Toast.LENGTH_SHORT).show();
-				} else {
-					// プリファレンスにサーバーURL、ユーザーID、パスワードを記憶する
-					SharedPreferences.Editor editor = preferences.edit();
-					editor.putString(PREFERENCE_KEY_URL, url);
-					editor.putString(PREFERENCE_KEY_USER_ID, userId);
-					editor.putString(PREFERENCE_KEY_PASSWORD, password);
-					editor.commit();
-
-					webController.createUser(url, userId, password);
+					if (response != null) {
+						AlertDialog.Builder dialog = new AlertDialog.Builder(RecordListActivity.this);
+						switch (response.getResponseCode()) {
+							case HttpURLConnection.HTTP_CREATED:
+								dialog.setTitle("成功");
+								dialog.setMessage("ID:" + info.getUserId() + "を作成しました。");
+								break;
+							case HttpURLConnection.HTTP_CONFLICT:
+								dialog.setTitle("失敗");
+								dialog.setMessage("ID:" + info.getUserId() + "はすでに使用されています。");
+								break;
+							default:
+								break;
+						}
+						dialog.show();
+					}
 				}
 			}
 		});
 
+		// 同期ボタンのクリックリスナー設定
 		Button buttonSync = (Button)findViewById(R.id.button_sync);
 		buttonSync.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EditText editText = (EditText)findViewById(R.id.et_server_url);
-				String url = editText.getText().toString();
-				Log.v("URL:", url);
-				webController.synchronize(RecordListActivity.this, url);
+				ConnectionInfo info = getConnectionInfo();
+
+				if (info != null) {
+					webController.synchronize(RecordListActivity.this, info);
+				}
 			}
 		});
 
+		// 「端末名を使用」ボタンのクリックリスナー設定
+		Button buttonModelName = (Button)findViewById(R.id.button_model_name);
+		buttonModelName.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				editTextDeviceId.setText(android.os.Build.MODEL);
+			}
+		});
 
 		// 走行記録一覧を表示する
 		showCyclingRecordList();
@@ -185,6 +208,46 @@ public class RecordListActivity extends AppCompatActivity {
 //		for (GPSData data : listGPSData) {
 //			Log.v("TEST", data.toString());
 //		}
+	}
+
+	private ConnectionInfo getConnectionInfo() {
+		ConnectionInfo info = null;
+
+		String url = editTextUrl.getText().toString();
+		String userId = editTextUserId.getText().toString();
+		String password = editTextPassword.getText().toString();
+		String deviceId = editTextDeviceId.getText().toString();
+
+		if (url.equals("")) {
+			Toast.makeText(RecordListActivity.this,
+					"URLが入力されていません", Toast.LENGTH_SHORT).show();
+		} else if (userId.equals("")) {
+			Toast.makeText(RecordListActivity.this,
+					"ユーザーIDが入力されていません", Toast.LENGTH_SHORT).show();
+		} else if (password.equals("")) {
+			Toast.makeText(RecordListActivity.this,
+					"パスワードが入力されていません", Toast.LENGTH_SHORT).show();
+		} else if (deviceId.equals("")) {
+			Toast.makeText(RecordListActivity.this,
+					"デバイスIDが入力されていません", Toast.LENGTH_SHORT).show();
+		} else {
+			// プリファレンスにサーバーURL、ユーザーID、パスワード、デバイスIDを記憶する
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString(PREFERENCE_KEY_URL, url);
+			editor.putString(PREFERENCE_KEY_USER_ID, userId);
+			editor.putString(PREFERENCE_KEY_PASSWORD, password);
+			editor.putString(PREFERENCE_KEY_DEVICE_ID, deviceId);
+			editor.commit();
+
+//			// MACアドレス取得 ※Android6.0からMACアドレスを取得できなくなった
+//			WifiManager wifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+//			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+//			String deviceId = wifiInfo.getMacAddress();
+
+			info = new ConnectionInfo(url, userId, password, deviceId);
+			Log.v("CON_INFO", info.toString());
+		}
+		return info;
 	}
 
 }

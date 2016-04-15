@@ -2,6 +2,8 @@ package android.iwamin.charilog.network;
 
 import android.content.Context;
 import android.iwamin.charilog.entity.CyclingRecord;
+import android.iwamin.charilog.lib.CommonLib;
+import android.iwamin.charilog.network.http.HttpResponse;
 import android.iwamin.charilog.network.param.GetRequestCyclingRecord;
 import android.iwamin.charilog.network.param.PostRequestCyclingRecord;
 import android.iwamin.charilog.network.param.PostRequestUserCreate;
@@ -13,7 +15,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.net.URL;
-import java.security.MessageDigest;
 import java.util.List;
 
 public class WebController {
@@ -30,29 +31,36 @@ public class WebController {
 		return _instance;
 	}
 
-	public void synchronize(Context context, String serverUrl) {
+	public void synchronize(Context context, ConnectionInfo connectionInfo) {
 		try {
-			URL url = new URL("http://" + serverUrl + "/record");
-//			URL testUrl = new URL("http://" + serverUrl + "/test");
+			// URLの設定
+			URL url = new URL("http://" + connectionInfo.getUrl() + "/record");
+			URL testUrl = new URL("http://" + connectionInfo.getUrl() + "/test");
+
+			// ログイン情報の設定
+			String userId = connectionInfo.getUserId();
+			String password = CommonLib.encryptSHA256(connectionInfo.getPassword());
+			String deviceId = CommonLib.encryptSHA256(connectionInfo.getDeviceId());
 
 			// POST
 			List<CyclingRecord> list = new RepositoryReader().getCyclingRecordList(context);
 			for (CyclingRecord record : list) {
 				PostRequestCyclingRecord param = new PostRequestCyclingRecord();
-				param.setUserId("nobi");
-				param.setDeviceId("nobi_device");
 				param.setUrl(url);
+				param.setUserId(userId);
+				param.setPassword(password);
+				param.setDeviceId(deviceId);
 				param.setRecord(record);
-				AsyncTask<PostRequestCyclingRecord, Void, String> postTask
+				AsyncTask<PostRequestCyclingRecord, Void, HttpResponse> postTask
 						= new CyclingRecordPostTask().execute(param);
-				String response = postTask.get();
+				String response = postTask.get().toString();
 			}
 
 			// GET
 			GetRequestCyclingRecord param = new GetRequestCyclingRecord(url);
-			AsyncTask<GetRequestCyclingRecord, Void, String> getTask
+			AsyncTask<GetRequestCyclingRecord, Void, HttpResponse> getTask
 					= new CyclingRecordGetTask().execute(param);
-			String jsonBody = getTask.get();
+			String jsonBody = getTask.get().toString();
 			System.out.println(jsonBody);
 		} catch(Exception e) {
 			Log.e("HTTP", e.getMessage());
@@ -60,35 +68,31 @@ public class WebController {
 		}
 	}
 
-	public void createUser(String url, String userId, String password) {
+	public HttpResponse createUser(ConnectionInfo connectionInfo) {
+		HttpResponse response = null;
 		try {
-			URL testUrl = new URL("http://" + url + "/account");
+			URL url = new URL("http://" + connectionInfo.getUrl() + "/account");
 
-			// パスワードを暗号化
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(password.getBytes());
-			byte[] cipher = messageDigest.digest();
-			StringBuilder sb = new StringBuilder();
-			for (byte b : cipher) {
-				sb.append(String.format("%02x", (b & 0xff)));
-			}
-//			Log.v("CIPHER", sb.toString());
+			String encryptedPassword = CommonLib.encryptSHA256(connectionInfo.getPassword());
+//			Log.v("CIPHER", encryptedPassword);
 
-			// サーバーに送信
+			// サーバーに新規ユーザー登録要求を送信
 			PostRequestUserCreate param = new PostRequestUserCreate(
-					testUrl,
-					userId,
-					sb.toString()
+					url,
+					connectionInfo.getUserId(),
+					encryptedPassword
 			);
-			AsyncTask<PostRequestUserCreate, Void, String> postTask
+			AsyncTask<PostRequestUserCreate, Void, HttpResponse> postTask
 					= new UserCreatePostTask().execute(param);
 
-			if (postTask != null) {
+			response = postTask.get();
+			if (response != null) {
 				// 受信データ確認
-				Log.v("CRE_USER", postTask.get());
+				Log.v("CRE_USER", response.toString());
 			}
 		} catch (Exception e) {
 			Log.e("CRE_USER", e.getMessage());
 		}
+		return response;
 	}
 }

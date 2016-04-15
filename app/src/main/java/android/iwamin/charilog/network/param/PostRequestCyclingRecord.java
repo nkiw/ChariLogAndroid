@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 public class PostRequestCyclingRecord {
 	private static final String JSON_NAME_USER_ID = "userId";
+	private static final String JSON_NAME_PASSWORD = "password";
 	private static final String JSON_NAME_DEVICE_ID = "deviceId";
 	private static final String JSON_NAME_DATE_TIME = "dateTime";
 	private static final String JSON_NAME_DATE = "date";
@@ -25,6 +26,7 @@ public class PostRequestCyclingRecord {
 
 	private URL url;
 	private String userId;
+	private String password;
 	private String deviceId;
 	private CyclingRecord record;
 
@@ -33,6 +35,7 @@ public class PostRequestCyclingRecord {
 
 		try {
 			json.put(JSON_NAME_USER_ID, userId);
+			json.put(JSON_NAME_PASSWORD, password);
 			json.put(JSON_NAME_DEVICE_ID, deviceId);
 			json.put(JSON_NAME_DATE_TIME, record.getDateRaw());
 			json.put(JSON_NAME_DATE, record.getDate());

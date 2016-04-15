@@ -13,9 +13,9 @@ import java.net.URL;
 
 public class HttpCommunicator {
 
-	public String doGet(URL url, String jsonBody) {
+	public HttpResponse doGet(URL url, String jsonBody) {
 		HttpURLConnection con = null;
-		String response = null;
+		HttpResponse response = null;
 
 		try {
 			con = (HttpURLConnection)url.openConnection();
@@ -35,7 +35,7 @@ public class HttpCommunicator {
 				while ((line = reader.readLine()) != null) {
 					sb.append(line);
 				}
-				response = sb.toString();
+				response = new HttpResponse(con.getResponseCode(), con.getResponseMessage(), sb.toString());
 			} catch (IOException e) {
 				Log.e("DO_GET1", e.getMessage());
 			} finally {
@@ -59,9 +59,9 @@ public class HttpCommunicator {
 		return response;
 	}
 
-	public String doPost(URL url, String jsonBody) {
+	public HttpResponse doPost(URL url, String jsonBody) {
 		HttpURLConnection con = null;
-		String response = null;
+		HttpResponse response = null;
 
 		try {
 			con = (HttpURLConnection) url.openConnection();
@@ -84,7 +84,7 @@ public class HttpCommunicator {
 					out.close();
 				}
 			}
-			response = con.getResponseCode() + "," + con.getResponseMessage();
+			response = new HttpResponse(con.getResponseCode(), con.getResponseMessage(), "");
 		} catch (IOException e) {
 			Log.e("DO_POST2", e.getMessage());
 		} finally {
