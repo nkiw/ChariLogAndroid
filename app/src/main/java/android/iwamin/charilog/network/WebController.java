@@ -1,5 +1,6 @@
 package android.iwamin.charilog.network;
 
+import android.app.Activity;
 import android.content.Context;
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
@@ -11,26 +12,23 @@ import android.iwamin.charilog.network.task.HttpRequestContent;
 import android.iwamin.charilog.network.task.HttpResponseContent;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
 public class WebController {
-	private static WebController _instance;
+	private Context context;
+	private Activity activity;
 
-	private WebController() {
-
+	public WebController(Activity activity, Context context) {
+		this.context = context;
+		this.activity = activity;
 	}
 
-	public static WebController getInstance() {
-		if (_instance == null) {
-			_instance = new WebController();
-		}
-		return _instance;
-	}
-
-	public void synchronize(Context context, ConnectionInfo connectionInfo) {
+	public void synchronize(ConnectionInfo connectionInfo) {
 		try {
 			// URLの設定
 			URL url = new URL("http://" + connectionInfo.getUrl() + "/record");
@@ -69,7 +67,7 @@ public class WebController {
 		}
 	}
 
-	public HttpResponseContent createUser(ConnectionInfo connectionInfo) {
+	public void createUser(ConnectionInfo connectionInfo) {
 		HttpResponseContent response = null;
 		try {
 			URL url = new URL("http://" + connectionInfo.getUrl() + "/account");
@@ -95,6 +93,25 @@ public class WebController {
 		} catch (Exception e) {
 			Log.e("CRE_USER", e.getMessage());
 		}
-		return response;
+
+		// 結果をダイアログで表示する
+		if (response != null) {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+			switch (response.getResponseCode()) {
+				case HttpURLConnection.HTTP_CREATED:
+					dialog.setTitle("成功");
+					dialog.setMessage("ID:" + connectionInfo.getUserId() + "を作成しました。");
+					break;
+				case HttpURLConnection.HTTP_CONFLICT:
+					dialog.setTitle("失敗");
+					dialog.setMessage("ID:" + connectionInfo.getUserId() + "はすでに使用されています。");
+					break;
+				default:
+					dialog.setTitle("エラー");
+					dialog.setMessage("エラーが発生しました。");
+					break;
+			}
+			dialog.show();
+		}
 	}
 }

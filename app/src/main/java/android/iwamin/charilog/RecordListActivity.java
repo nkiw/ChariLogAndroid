@@ -1,12 +1,10 @@
 package android.iwamin.charilog;
 
-import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
 import android.iwamin.charilog.network.ConnectionInfo;
 import android.iwamin.charilog.network.WebController;
-import android.iwamin.charilog.network.task.HttpResponseContent;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +19,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +36,6 @@ public class RecordListActivity extends AppCompatActivity {
 	EditText editTextUserId;
 	EditText editTextPassword;
 	EditText editTextDeviceId;
-
-	WebController webController = WebController.getInstance();
-
 	SharedPreferences preferences;
 
 	@Override
@@ -102,24 +96,8 @@ public class RecordListActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				ConnectionInfo info = getConnectionInfo();
 				if (info != null) {
-					HttpResponseContent response = webController.createUser(info);
-
-					if (response != null) {
-						AlertDialog.Builder dialog = new AlertDialog.Builder(RecordListActivity.this);
-						switch (response.getResponseCode()) {
-							case HttpURLConnection.HTTP_CREATED:
-								dialog.setTitle("成功");
-								dialog.setMessage("ID:" + info.getUserId() + "を作成しました。");
-								break;
-							case HttpURLConnection.HTTP_CONFLICT:
-								dialog.setTitle("失敗");
-								dialog.setMessage("ID:" + info.getUserId() + "はすでに使用されています。");
-								break;
-							default:
-								break;
-						}
-						dialog.show();
-					}
+					new WebController(RecordListActivity.this, RecordListActivity.this)
+							.createUser(info);
 				}
 			}
 		});
@@ -130,9 +108,9 @@ public class RecordListActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				ConnectionInfo info = getConnectionInfo();
-
 				if (info != null) {
-					webController.synchronize(RecordListActivity.this, info);
+					new WebController(RecordListActivity.this, RecordListActivity.this)
+							.synchronize(info);
 				}
 			}
 		});
