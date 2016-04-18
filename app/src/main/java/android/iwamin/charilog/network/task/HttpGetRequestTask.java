@@ -11,6 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HttpGetRequestTask extends AsyncTask<HttpRequestContent, Void, HttpResponseContent> {
+	private static final int TIME_OUT = 5000;	// タイムアウト時間[msec]
+
 	@Override
 	protected HttpResponseContent doInBackground(HttpRequestContent... params) {
 		URL url = params[0].getUrl();
@@ -21,6 +23,7 @@ public class HttpGetRequestTask extends AsyncTask<HttpRequestContent, Void, Http
 		try {
 			con = (HttpURLConnection)url.openConnection();
 			con.setRequestMethod("GET");
+			con.setConnectTimeout(TIME_OUT);
 			con.connect();
 
 			InputStream in = null;
@@ -52,6 +55,8 @@ public class HttpGetRequestTask extends AsyncTask<HttpRequestContent, Void, Http
 			}
 		} catch (IOException e) {
 			Log.e("DO_GET2", e.getMessage());
+		} catch (Exception e) {
+			Log.e("DO_GET3", e.getMessage());
 		} finally {
 			if (con != null) {
 				con.disconnect();

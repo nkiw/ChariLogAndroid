@@ -13,6 +13,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HttpPostRequestTask extends AsyncTask<HttpRequestContent, Void, HttpResponseContent> {
+	private static final int TIME_OUT = 5000;	// タイムアウト時間[msec]
+
 	@Override
 	protected HttpResponseContent doInBackground(HttpRequestContent... params) {
 		URL url = params[0].getUrl();
@@ -26,6 +28,7 @@ public class HttpPostRequestTask extends AsyncTask<HttpRequestContent, Void, Htt
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
 			con.setRequestProperty("Content-Type", "application/json");
+			con.setConnectTimeout(TIME_OUT);
 			con.connect();
 
 			OutputStream out = null;
@@ -72,6 +75,8 @@ public class HttpPostRequestTask extends AsyncTask<HttpRequestContent, Void, Htt
 			response = new HttpResponseContent(con.getResponseCode(), con.getResponseMessage(), sb.toString());
 		} catch (IOException e) {
 			Log.e("DO_POST2", e.getMessage());
+		} catch (Exception e) {
+			Log.e("DO_POST3", e.getMessage());
 		} finally {
 			if (con != null) {
 				con.disconnect();
