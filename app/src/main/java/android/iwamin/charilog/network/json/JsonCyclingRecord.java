@@ -1,4 +1,4 @@
-package android.iwamin.charilog.network.param;
+package android.iwamin.charilog.network.json;
 
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.util.Log;
@@ -6,12 +6,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class PostRequestCyclingRecord {
+@AllArgsConstructor(suppressConstructorProperties = true)
+public class JsonCyclingRecord {
 	private static final String JSON_NAME_USER_ID = "userId";
 	private static final String JSON_NAME_PASSWORD = "password";
 	private static final String JSON_NAME_DEVICE_ID = "deviceId";
@@ -24,7 +24,6 @@ public class PostRequestCyclingRecord {
 	private static final String JSON_NAME_AVE_SPEED = "aveSpeed";
 	private static final String JSON_NAME_MAX_SPEED = "maxSpeed";
 
-	private URL url;
 	private String userId;
 	private String password;
 	private String deviceId;

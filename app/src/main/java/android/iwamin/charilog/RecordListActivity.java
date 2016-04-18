@@ -6,7 +6,7 @@ import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
 import android.iwamin.charilog.network.ConnectionInfo;
 import android.iwamin.charilog.network.WebController;
-import android.iwamin.charilog.network.http.HttpResponse;
+import android.iwamin.charilog.network.task.HttpResponseContent;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -102,7 +102,7 @@ public class RecordListActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				ConnectionInfo info = getConnectionInfo();
 				if (info != null) {
-					HttpResponse response = webController.createUser(info);
+					HttpResponseContent response = webController.createUser(info);
 
 					if (response != null) {
 						AlertDialog.Builder dialog = new AlertDialog.Builder(RecordListActivity.this);

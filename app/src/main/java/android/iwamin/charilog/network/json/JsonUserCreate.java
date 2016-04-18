@@ -1,22 +1,19 @@
-package android.iwamin.charilog.network.param;
+package android.iwamin.charilog.network.json;
 
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor(suppressConstructorProperties = true)
-public class PostRequestUserCreate {
+public class JsonUserCreate {
 	private static final String JSON_NAME_USER_ID = "userId";
 	private static final String JSON_NAME_PASSWORD = "password";
 
-	private URL url;
 	private String userId;
 	private String password;
 

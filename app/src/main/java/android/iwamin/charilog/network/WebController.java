@@ -3,13 +3,12 @@ package android.iwamin.charilog.network;
 import android.content.Context;
 import android.iwamin.charilog.entity.CyclingRecord;
 import android.iwamin.charilog.lib.CommonLib;
-import android.iwamin.charilog.network.http.HttpResponse;
-import android.iwamin.charilog.network.param.GetRequestCyclingRecord;
-import android.iwamin.charilog.network.param.PostRequestCyclingRecord;
-import android.iwamin.charilog.network.param.PostRequestUserCreate;
-import android.iwamin.charilog.network.task.CyclingRecordGetTask;
-import android.iwamin.charilog.network.task.CyclingRecordPostTask;
-import android.iwamin.charilog.network.task.UserCreatePostTask;
+import android.iwamin.charilog.network.json.JsonCyclingRecord;
+import android.iwamin.charilog.network.json.JsonUserCreate;
+import android.iwamin.charilog.network.task.HttpGetRequestTask;
+import android.iwamin.charilog.network.task.HttpPostRequestTask;
+import android.iwamin.charilog.network.task.HttpRequestContent;
+import android.iwamin.charilog.network.task.HttpResponseContent;
 import android.iwamin.charilog.repository.RepositoryReader;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -42,52 +41,55 @@ public class WebController {
 			String password = CommonLib.encryptSHA256(connectionInfo.getPassword());
 			String deviceId = CommonLib.encryptSHA256(connectionInfo.getDeviceId());
 
-			// POST
+			// ローカルに保存されている走行記録を取得する
 			List<CyclingRecord> list = new RepositoryReader().getCyclingRecordList(context);
+
+			// 走行記録リストをサーバーに送信する
 			for (CyclingRecord record : list) {
-				PostRequestCyclingRecord param = new PostRequestCyclingRecord();
-				param.setUrl(url);
-				param.setUserId(userId);
-				param.setPassword(password);
-				param.setDeviceId(deviceId);
-				param.setRecord(record);
-				AsyncTask<PostRequestCyclingRecord, Void, HttpResponse> postTask
-						= new CyclingRecordPostTask().execute(param);
-				String response = postTask.get().toString();
+				// 走行記録のJSONを生成し、HTTPリクエストを作成する
+				JsonCyclingRecord param = new JsonCyclingRecord(
+						userId, password, deviceId, record);
+				HttpRequestContent content = new HttpRequestContent(url, param.toJson().toString());
+				// HTTP POSTを実行する
+				AsyncTask<HttpRequestContent, Void, HttpResponseContent> postTask
+						= new HttpPostRequestTask().execute(content);
+				// レスポンスを取得する
+				HttpResponseContent response = postTask.get();
 			}
 
-			// GET
-			GetRequestCyclingRecord param = new GetRequestCyclingRecord(url);
-			AsyncTask<GetRequestCyclingRecord, Void, HttpResponse> getTask
-					= new CyclingRecordGetTask().execute(param);
-			String jsonBody = getTask.get().toString();
-			System.out.println(jsonBody);
+			// サーバーに保存されている走行記録を全件取得(※デバッグ用)
+			HttpRequestContent content = new HttpRequestContent(url, "");
+			AsyncTask<HttpRequestContent, Void, HttpResponseContent> getTask
+					= new HttpGetRequestTask().execute(content);
+			HttpResponseContent response = getTask.get();
+			System.out.println(response.toString());
 		} catch(Exception e) {
 			Log.e("HTTP", e.getMessage());
 		} finally {
 		}
 	}
 
-	public HttpResponse createUser(ConnectionInfo connectionInfo) {
-		HttpResponse response = null;
+	public HttpResponseContent createUser(ConnectionInfo connectionInfo) {
+		HttpResponseContent response = null;
 		try {
 			URL url = new URL("http://" + connectionInfo.getUrl() + "/account");
 
+			// パスワードを暗号化する
 			String encryptedPassword = CommonLib.encryptSHA256(connectionInfo.getPassword());
 //			Log.v("CIPHER", encryptedPassword);
 
-			// サーバーに新規ユーザー登録要求を送信
-			PostRequestUserCreate param = new PostRequestUserCreate(
-					url,
-					connectionInfo.getUserId(),
-					encryptedPassword
-			);
-			AsyncTask<PostRequestUserCreate, Void, HttpResponse> postTask
-					= new UserCreatePostTask().execute(param);
+			// ユーザー情報のJSONを生成し、HTTPリクエストを作成する
+			JsonUserCreate request = new JsonUserCreate(
+					connectionInfo.getUserId(), encryptedPassword);
+			HttpRequestContent content = new HttpRequestContent(url, request.toJson().toString());
 
+			// HTTP POSTを実行する
+			AsyncTask<HttpRequestContent, Void, HttpResponseContent> postTask
+					= new HttpPostRequestTask().execute(content);
+
+			// レスポンスを取得する
 			response = postTask.get();
 			if (response != null) {
-				// 受信データ確認
 				Log.v("CRE_USER", response.toString());
 			}
 		} catch (Exception e) {

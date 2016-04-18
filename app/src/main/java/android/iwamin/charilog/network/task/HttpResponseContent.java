@@ -1,11 +1,11 @@
-package android.iwamin.charilog.network.http;
+package android.iwamin.charilog.network.task;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor(suppressConstructorProperties = true)
-public class HttpResponse {
+public class HttpResponseContent {
 	private int responseCode;
 	private String responseMessage;
 	private String body;
