@@ -1,22 +1,24 @@
 package android.charilog.network;
 
 import android.app.Activity;
-import android.content.Context;
 import android.charilog.entity.CyclingRecord;
 import android.charilog.lib.CommonLib;
+import android.charilog.network.json.JsonAccountInfo;
 import android.charilog.network.json.JsonCyclingRecord;
-import android.charilog.network.json.JsonUserCreate;
-import android.charilog.network.task.HttpGetRequestTask;
 import android.charilog.network.task.HttpPostRequestTask;
 import android.charilog.network.task.HttpRequestContent;
 import android.charilog.network.task.HttpResponseContent;
 import android.charilog.repository.RepositoryReader;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import org.json.JSONArray;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WebController {
@@ -31,7 +33,7 @@ public class WebController {
 	public void synchronize(ConnectionInfo connectionInfo) {
 		try {
 			// URLの設定
-			URL url = new URL("http://" + connectionInfo.getUrl() + "/record");
+			URL url = new URL("http://" + connectionInfo.getUrl() + "/record/upload");
 			URL testUrl = new URL("http://" + connectionInfo.getUrl() + "/test");
 
 			// ログイン情報の設定
@@ -53,14 +55,8 @@ public class WebController {
 						= new HttpPostRequestTask().execute(content);
 				// レスポンスを取得する
 				HttpResponseContent response = postTask.get();
+				System.out.println(response.toString());
 			}
-
-			// サーバーに保存されている走行記録を全件取得(※デバッグ用)
-			HttpRequestContent content = new HttpRequestContent(url, "");
-			AsyncTask<HttpRequestContent, Void, HttpResponseContent> getTask
-					= new HttpGetRequestTask().execute(content);
-			HttpResponseContent response = getTask.get();
-			System.out.println(response.toString());
 		} catch(Exception e) {
 			Log.e("HTTP", e.getMessage());
 		} finally {
@@ -74,10 +70,10 @@ public class WebController {
 
 			// パスワードを暗号化する
 			String encryptedPassword = CommonLib.encryptSHA256(connectionInfo.getPassword());
-//			Log.v("CIPHER", encryptedPassword);
+			Log.v("CIPHER", encryptedPassword);
 
 			// ユーザー情報のJSONを生成し、HTTPリクエストを作成する
-			JsonUserCreate request = new JsonUserCreate(
+			JsonAccountInfo request = new JsonAccountInfo(
 					connectionInfo.getUserId(), encryptedPassword);
 			HttpRequestContent content = new HttpRequestContent(url, request.toJson().toString());
 
@@ -113,5 +109,58 @@ public class WebController {
 			}
 			dialog.show();
 		}
+	}
+
+	public List<CyclingRecordDownload> downloadRecord(ConnectionInfo connectionInfo) {
+		List<CyclingRecordDownload> list = new ArrayList<>();
+		HttpResponseContent response = null;
+		try {
+			URL url = new URL("http://" + connectionInfo.getUrl() + "/record/download");
+
+			// パスワードを暗号化する
+			String encryptedPassword = CommonLib.encryptSHA256(connectionInfo.getPassword());
+
+			// ユーザー情報のJSONを生成し、HTTPリクエストを作成する
+			JsonAccountInfo request = new JsonAccountInfo(
+					connectionInfo.getUserId(), encryptedPassword);
+			HttpRequestContent content = new HttpRequestContent(url, request.toJson().toString());
+
+			// HTTP POSTを実行する
+			AsyncTask<HttpRequestContent, Void, HttpResponseContent> postTask
+					= new HttpPostRequestTask().execute(content);
+
+			// レスポンスを取得する
+			response = postTask.get();
+
+			// JSON解析
+			JSONArray jsonArray = new JSONArray(response.getBody());
+			for (int i = 0; i < jsonArray.length(); i++) {
+				list.add(new CyclingRecordDownload(jsonArray.getJSONObject(i)));
+			}
+		} catch (Exception e) {
+			Log.e("DOWNREC", e.getMessage());
+		}
+
+		// 結果をダイアログで表示する
+		if (response != null) {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+			switch (response.getResponseCode()) {
+				case HttpURLConnection.HTTP_OK:
+					// Nothing
+					break;
+				case HttpURLConnection.HTTP_UNAUTHORIZED:
+					dialog.setTitle("ユーザー認証失敗");
+					dialog.setMessage("ユーザーID、又は、パスワードが間違っています。");
+					dialog.show();
+					break;
+				default:
+					dialog.setTitle("エラー");
+					dialog.setMessage("エラーが発生しました。");
+					dialog.show();
+					break;
+			}
+		}
+
+		return list;
 	}
 }

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">チャリログ</string>
-    <string name="action_record_list">走行記録一覧</string>
+    <string name="action_record_list">走行記録（ローカルデータ）</string>
+    <string name="action_download_record">走行記録（ダウンロード）</string>
     <string name="action_settings">設定(工事中)</string>
 
 
@@ -38,4 +39,6 @@
     <string name="button_user_create">ユーザー作成</string>
     <string name="hint_et_device_id">デバイスID:</string>
     <string name="button_model_name">端末名を使用</string>
+    <string name="title_activity_download_record">走行記録ダウンロード</string>
+    <string name="button_download">ダウンロード</string>
 </resources>

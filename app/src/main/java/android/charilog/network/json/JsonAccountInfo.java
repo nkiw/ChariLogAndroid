@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor(suppressConstructorProperties = true)
-public class JsonUserCreate {
+public class JsonAccountInfo {
 	private static final String JSON_NAME_USER_ID = "userId";
 	private static final String JSON_NAME_PASSWORD = "password";
 

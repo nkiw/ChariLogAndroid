@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="android.charilog.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"> <!-- 画面回転でDestoryしてしまうため固定にする -->
@@ -25,14 +25,19 @@
         </activity>
 
         <service
-            android:name="android.charilog.LocationService"
+            android:name=".LocationService"
             android:enabled="true"
             android:exported="true">
         </service>
 
         <activity
-            android:name="android.charilog.RecordListActivity"
+            android:name=".RecordListActivity"
             android:label="@string/title_activity_record_list"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".DownloadRecordActivity"
+            android:label="@string/title_activity_download_record"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

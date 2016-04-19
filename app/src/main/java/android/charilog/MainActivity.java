@@ -141,10 +141,13 @@ public class MainActivity extends AppCompatActivity {
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.action_settings) {
 			return true;
-		}
-
-		if (id == R.id.action_record_list) {
+		} else if (id == R.id.action_record_list) {
 			Intent intent = new Intent(this, RecordListActivity.class);
+			intent.putExtra("IS_EXE", isExecute);
+			startActivity(intent);
+			return true;
+		} else if (id == R.id.action_download_record) {
+			Intent intent = new Intent(this, DownloadRecordActivity.class);
 			intent.putExtra("IS_EXE", isExecute);
 			startActivity(intent);
 			return true;
