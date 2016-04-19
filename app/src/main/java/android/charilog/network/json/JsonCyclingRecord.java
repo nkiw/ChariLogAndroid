@@ -1,6 +1,6 @@
 package android.charilog.network.json;
 
-import android.charilog.entity.CyclingRecord;
+import android.charilog.repository.entity.CyclingRecord;
 import android.util.Log;
 
 import org.json.JSONException;

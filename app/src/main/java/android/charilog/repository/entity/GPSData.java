@@ -1,4 +1,4 @@
-package android.charilog.entity;
+package android.charilog.repository.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

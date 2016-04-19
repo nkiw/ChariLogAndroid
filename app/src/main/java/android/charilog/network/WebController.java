@@ -1,7 +1,7 @@
 package android.charilog.network;
 
 import android.app.Activity;
-import android.charilog.entity.CyclingRecord;
+import android.charilog.repository.entity.CyclingRecord;
 import android.charilog.lib.CommonLib;
 import android.charilog.network.json.JsonAccountInfo;
 import android.charilog.network.json.JsonCyclingRecord;

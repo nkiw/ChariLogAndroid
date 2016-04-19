@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.charilog.entity.CyclingRecord;
-import android.charilog.entity.GPSData;
+import android.charilog.repository.entity.CyclingRecord;
+import android.charilog.repository.entity.GPSData;
 import android.util.Log;
 
 import java.util.ArrayList;

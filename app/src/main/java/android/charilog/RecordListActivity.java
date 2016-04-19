@@ -1,6 +1,6 @@
 package android.charilog;
 
-import android.charilog.entity.CyclingRecord;
+import android.charilog.repository.entity.CyclingRecord;
 import android.charilog.lib.CommonLib;
 import android.charilog.network.ConnectionInfo;
 import android.charilog.network.WebController;
