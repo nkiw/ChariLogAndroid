@@ -1,5 +1,6 @@
 package android.charilog.repository;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -81,7 +82,8 @@ public class RepositoryReader {
 						cursor.getInt(RECORD_TOTAL_TIME.ordinal()),
 						cursor.getInt(RECORD_DISTANCE.ordinal()),
 						cursor.getDouble(RECORD_AVE_SPEED.ordinal()),
-						cursor.getDouble(RECORD_MAX_SPEED.ordinal())
+						cursor.getDouble(RECORD_MAX_SPEED.ordinal()),
+						cursor.getInt(RECORD_UPLOADED.ordinal())
 				);
 				list.add(record);
 			}
@@ -157,5 +159,56 @@ public class RepositoryReader {
 		}
 
 		return ret;
+	}
+
+	public void setUploaded(Context context, int id) {
+		DatabaseHelper databaseHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+		try {
+			ContentValues values = new ContentValues();
+			String[] whereArgs = {String.valueOf(id)};
+			values.put(COLUMN_RECORD_UPLOADED, 1);
+			int num = db.update(TABLE_RECORD, values, (COLUMN_RECORD_ID + " = ?"), whereArgs);
+			Log.v("SET_UPLOADED", String.valueOf(num));
+		} catch(Exception e) {
+			Log.e("SQL", e.getMessage());
+		} finally {
+			db.close();
+		}
+	}
+
+	public List<CyclingRecord> getNotUploadedRecord(Context context) {
+		List<CyclingRecord> list = new ArrayList<>();
+
+		DatabaseHelper databaseHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+		try {
+			String[] selectionArgs = {"0"};
+			Cursor cursor = db.query(TABLE_RECORD, RECORD_COLUMNS_STR,
+					(COLUMN_RECORD_UPLOADED + " = ?"), selectionArgs, null, null, COLUMN_RECORD_ID);
+			while (cursor.moveToNext()) {
+				CyclingRecord record = new CyclingRecord(
+						cursor.getInt(RECORD_ID.ordinal()),
+						cursor.getLong(RECORD_DATE_RAW.ordinal()),
+						cursor.getString(RECORD_DATE.ordinal()),
+						cursor.getString(RECORD_START_TIME.ordinal()),
+						cursor.getString(RECORD_END_TIME.ordinal()),
+						cursor.getInt(RECORD_TOTAL_TIME.ordinal()),
+						cursor.getInt(RECORD_DISTANCE.ordinal()),
+						cursor.getDouble(RECORD_AVE_SPEED.ordinal()),
+						cursor.getDouble(RECORD_MAX_SPEED.ordinal()),
+						cursor.getInt(RECORD_UPLOADED.ordinal())
+				);
+				list.add(record);
+			}
+		} catch (Exception e) {
+			Log.e("SQL", e.getMessage());
+		} finally {
+			db.close();
+		}
+
+		return list;
 	}
 }

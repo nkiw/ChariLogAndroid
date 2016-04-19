@@ -16,4 +16,5 @@ public class CyclingRecord {
 	private int distance;
 	private double aveSpeed;
 	private double maxSpeed;
+	private int uploaded;
 }

@@ -41,8 +41,9 @@ public class WebController {
 			String password = CommonLib.encryptSHA256(connectionInfo.getPassword());
 			String deviceId = CommonLib.encryptSHA256(connectionInfo.getDeviceId());
 
-			// ローカルに保存されている走行記録を取得する
-			List<CyclingRecord> list = new RepositoryReader().getCyclingRecordList(context);
+			// ローカルに保存されている未送信の走行記録を取得する
+			RepositoryReader repositoryReader = new RepositoryReader();
+			List<CyclingRecord> list = repositoryReader.getNotUploadedRecord(context);
 
 			// 走行記録リストをサーバーに送信する
 			for (CyclingRecord record : list) {
@@ -56,6 +57,11 @@ public class WebController {
 				// レスポンスを取得する
 				HttpResponseContent response = postTask.get();
 				System.out.println(response.toString());
+
+				// アップロードに成功したら、アップロード済みをセットする
+				if (response.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED) {
+					repositoryReader.setUploaded(context, record.getId());
+				}
 			}
 		} catch(Exception e) {
 			Log.e("HTTP", e.getMessage());

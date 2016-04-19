@@ -5,7 +5,7 @@ public class SQLConstants {
 	public static final String DB_NAME = "cycling_log";
 
 	// データベースバージョン
-	public static final int DB_VERSION = 2;
+	public static final int DB_VERSION = 3;
 
 	// 走行記録テーブル
 	public static final String TABLE_RECORD = "cycling_record";
@@ -19,6 +19,7 @@ public class SQLConstants {
 	public static final String COLUMN_RECORD_DISTANCE = "distance";
 	public static final String COLUMN_RECORD_AVE_SPEED = "ave_speed";
 	public static final String COLUMN_RECORD_MAX_SPEED = "max_speed";
+	public static final String COLUMN_RECORD_UPLOADED = "uploaded";
 
 	// 走行記録テーブル新規作成用 (Ver.2)
 	public static final String SQL_CREATE_RECORD_TABLE = "create table " + TABLE_RECORD + " ("
@@ -30,7 +31,8 @@ public class SQLConstants {
 			+ COLUMN_RECORD_TOTAL_TIME + " integer, "
 			+ COLUMN_RECORD_DISTANCE + " integer, "
 			+ COLUMN_RECORD_AVE_SPEED + " real, "
-			+ COLUMN_RECORD_MAX_SPEED + " real)";
+			+ COLUMN_RECORD_MAX_SPEED + " real, "
+			+ COLUMN_RECORD_UPLOADED + " integer default 0)";
 
 	public enum RECORD_COLUMNS {
 		RECORD_ID,
@@ -42,6 +44,7 @@ public class SQLConstants {
 		RECORD_DISTANCE,
 		RECORD_AVE_SPEED,
 		RECORD_MAX_SPEED,
+		RECORD_UPLOADED,
 
 		RECORD_COLUMN_NUM
 	}
@@ -55,7 +58,8 @@ public class SQLConstants {
 			COLUMN_RECORD_TOTAL_TIME,
 			COLUMN_RECORD_DISTANCE,
 			COLUMN_RECORD_AVE_SPEED,
-			COLUMN_RECORD_MAX_SPEED
+			COLUMN_RECORD_MAX_SPEED,
+			COLUMN_RECORD_UPLOADED
 	};
 
 	// GPSデータ記録テーブル
