@@ -60,7 +60,7 @@ public class HttpPostRequestTask extends AsyncTask<HttpRequestContent, Void, Htt
 					sb.append(line);
 				}
 			} catch (IOException e) {
-				Log.e("DO_GET1", e.getMessage());
+				Log.e("DO_POST1", e.getMessage());
 			} finally {
 				if (reader != null) {
 					reader.close();

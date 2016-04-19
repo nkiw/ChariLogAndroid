@@ -1,20 +1,23 @@
 package android.charilog.network;
 
 import android.app.Activity;
-import android.charilog.repository.entity.CyclingRecord;
 import android.charilog.lib.CommonLib;
 import android.charilog.network.json.JsonAccountInfo;
 import android.charilog.network.json.JsonCyclingRecord;
+import android.charilog.network.json.JsonGPSData;
 import android.charilog.network.task.HttpPostRequestTask;
 import android.charilog.network.task.HttpRequestContent;
 import android.charilog.network.task.HttpResponseContent;
 import android.charilog.repository.RepositoryReader;
+import android.charilog.repository.entity.CyclingRecord;
+import android.charilog.repository.entity.GPSData;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,10 +34,15 @@ public class WebController {
 	}
 
 	public void synchronize(ConnectionInfo connectionInfo) {
+		boolean isSuccess = false;
+		int count = 0;
+
 		try {
 			// URLの設定
-			URL url = new URL("http://" + connectionInfo.getUrl() + "/record/upload");
-			URL testUrl = new URL("http://" + connectionInfo.getUrl() + "/test");
+			URL urlRecord = new URL("http://" + connectionInfo.getUrl() + "/record/upload");
+			URL urlGPS = new URL("http://" + connectionInfo.getUrl() + "/gps/upload");
+			URL urlKey = new URL("http://" + connectionInfo.getUrl() + "/gps/invalidate-key");
+//			URL testUrl = new URL("http://" + connectionInfo.getUrl() + "/test");
 
 			// ログイン情報の設定
 			String userId = connectionInfo.getUserId();
@@ -47,25 +55,78 @@ public class WebController {
 
 			// 走行記録リストをサーバーに送信する
 			for (CyclingRecord record : list) {
-				// 走行記録のJSONを生成し、HTTPリクエストを作成する
+				// 走行記録のJSONを生成する
 				JsonCyclingRecord param = new JsonCyclingRecord(
 						userId, password, deviceId, record);
-				HttpRequestContent content = new HttpRequestContent(url, param.toJson().toString());
-				// HTTP POSTを実行する
+				// 走行記録をサーバーに送信する
+				HttpRequestContent content = new HttpRequestContent(urlRecord, param.toJson().toString());
 				AsyncTask<HttpRequestContent, Void, HttpResponseContent> postTask
 						= new HttpPostRequestTask().execute(content);
 				// レスポンスを取得する
 				HttpResponseContent response = postTask.get();
-				System.out.println(response.toString());
+//				System.out.println(response.toString());
 
-				// アップロードに成功したら、アップロード済みをセットする
-				if (response.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED) {
-					repositoryReader.setUploaded(context, record.getId());
+				// アップロードに失敗した場合、処理を終了する
+				if (response.getResponseCode() != HttpURLConnection.HTTP_ACCEPTED) {
+					break;
 				}
+
+				// レスポンスからGPSデータ登録用keyを取得する
+				String key = new JSONObject(response.getBody()).getString("key");
+//				Log.v("KEY", key);
+
+				// このレコードに対応するGPSデータを取得する
+				List<GPSData> gpsList = repositoryReader.getGPSDataList(context, record.getDateRaw());
+//				System.out.println("GPS_CNT: " + gpsList.size());
+
+				// GPSデータ送信用のJSONオブジェクトを作成する
+				JSONArray jsonArray = new JSONArray();
+				for (GPSData gps : gpsList) {
+					jsonArray.put(new JsonGPSData(gps).toJson());
+				}
+				JSONObject gpsBody = new JSONObject();
+				gpsBody.put("key", key);
+				gpsBody.put("data", jsonArray);
+//				System.out.println("GPS_JSON: " + gpsBody.toString());
+				// GPSデータを送信する
+				HttpRequestContent gpsContent = new HttpRequestContent(urlGPS, gpsBody.toString());
+				AsyncTask<HttpRequestContent, Void, HttpResponseContent> gpsPostTask
+						= new HttpPostRequestTask().execute(gpsContent);
+				// レスポンスを取得する
+				HttpResponseContent gpsResponse = gpsPostTask.get();
+//				System.out.println(gpsResponse.toString());
+
+				// アップロードに失敗した場合、処理を終了する
+				if (gpsResponse.getResponseCode() != HttpURLConnection.HTTP_ACCEPTED) {
+					break;
+				}
+
+				// GPSデータ登録用キーの無効化を要求する
+				JSONObject keyBody = new JSONObject();
+				keyBody.put("key", key);
+				HttpRequestContent keyContent = new HttpRequestContent(urlKey, keyBody.toString());
+				AsyncTask<HttpRequestContent, Void, HttpResponseContent> keyPostTask
+						= new HttpPostRequestTask().execute(keyContent);
+				HttpResponseContent keyResponse = keyPostTask.get();
+//				System.out.println(keyResponse.toString());
+
+				// このレコードのアップロード済みをセットする
+				repositoryReader.setUploaded(context, record.getId());
+				count++;
 			}
+			isSuccess = true;
 		} catch(Exception e) {
 			Log.e("HTTP", e.getMessage());
 		} finally {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+			if (isSuccess) {
+				dialog.setTitle("成功");
+				dialog.setMessage("新たに" + count + "件登録しました。");
+			} else {
+				dialog.setTitle("エラー");
+				dialog.setMessage("途中でエラーが発生しました(" + count + "件登録済み)。");
+			}
+			dialog.show();
 		}
 	}
 
