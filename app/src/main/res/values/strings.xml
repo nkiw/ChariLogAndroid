@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">チャリログ</string>
     <string name="action_record_list">走行記録（ローカルデータ）</string>
-    <string name="action_download_record">走行記録（ダウンロード）</string>
+    <string name="action_download_record">走行記録（サーバー）</string>
     <string name="action_settings">設定(工事中)</string>
 
 
@@ -23,22 +23,23 @@
     <string name="tv_ave_speed">平均時速：</string>
 
     <string name="tv_status">記録中...</string>
-    <string name="title_activity_record_list">走行記録一覧</string>
+    <string name="title_activity_record_list">走行記録一覧（ローカルデータ）</string>
     <string name="hint_del_id">一覧から削除するID: </string>
     <string name="button_del">削除</string>
-    <string name="button_sync">同期</string>
+    <string name="button_sync">アップロード</string>
     <string name="hint_input_url">サーバーのURL:</string>
 
     <string name="tv_accuracy">精度(Accuracy):</string>
     <string name="tv_unit">m以内</string>
     <string name="et_accuracy_default">15</string>
     <string name="tv_accuracy_range">位置精度の許容範囲(Accuracy):</string>
+    <string name="tv_menu">※記録結果は右上のメニューから見ることが出来ます。</string>
 
     <string name="hint_user_id">ユーザーID:</string>
     <string name="hint_password">パスワード:</string>
     <string name="button_user_create">ユーザー作成</string>
     <string name="hint_et_device_id">デバイスID:</string>
     <string name="button_model_name">端末名を使用</string>
-    <string name="title_activity_download_record">走行記録ダウンロード</string>
+    <string name="title_activity_download_record">走行記録一覧（サーバー）</string>
     <string name="button_download">ダウンロード</string>
 </resources>

@@ -29,8 +29,15 @@
                     android:layout_width="100dp"
                     android:layout_height="80dp"
                     android:text="@string/buttonStop"/>
+
             </TableRow>
         </TableLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="@string/tv_menu"/>
 
         <!--動作状態表示-->
         <TextView

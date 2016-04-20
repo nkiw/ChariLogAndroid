@@ -82,7 +82,7 @@
 
         <EditText
             android:id="@+id/et_del_id"
-            android:layout_width="200dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:inputType="numberDecimal"
@@ -90,7 +90,7 @@
 
         <Button
             android:id="@+id/button_del"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:text="@string/button_del"/>
 
