@@ -134,7 +134,7 @@ public class WebController {
 	public void createUser(ConnectionInfo connectionInfo) {
 		HttpResponseContent response = null;
 		try {
-			URL url = new URL("http://" + connectionInfo.getUrl() + "/account");
+			URL url = new URL("http://" + connectionInfo.getUrl() + "/account/create");
 
 			// パスワードを暗号化する
 			String encryptedPassword = CommonLib.encryptSHA256(connectionInfo.getPassword());
