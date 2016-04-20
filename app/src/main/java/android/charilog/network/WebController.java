@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.charilog.lib.CommonLib;
 import android.charilog.network.json.JsonAccountInfo;
 import android.charilog.network.json.JsonCyclingRecord;
+import android.charilog.network.json.JsonDeleteRecord;
 import android.charilog.network.json.JsonGPSData;
 import android.charilog.network.task.HttpPostRequestTask;
 import android.charilog.network.task.HttpRequestContent;
@@ -111,7 +112,7 @@ public class WebController {
 //				System.out.println(keyResponse.toString());
 
 				// このレコードのアップロード済みをセットする
-				repositoryReader.setUploaded(context, record.getId());
+//				repositoryReader.setUploaded(context, record.getId());
 				count++;
 			}
 			isSuccess = true;
@@ -229,5 +230,57 @@ public class WebController {
 		}
 
 		return list;
+	}
+
+	public void deleteRecord(ConnectionInfo connectionInfo, Integer recordId) {
+		HttpResponseContent response = null;
+		try {
+			URL url = new URL("http://" + connectionInfo.getUrl() + "/record/delete");
+
+			// パスワードを暗号化する
+			String encryptedPassword = CommonLib.encryptSHA256(connectionInfo.getPassword());
+			Log.v("CIPHER", encryptedPassword);
+
+			// ユーザー情報のJSONを生成し、HTTPリクエストを作成する
+			JsonDeleteRecord request = new JsonDeleteRecord(
+					connectionInfo.getUserId(), encryptedPassword, recordId);
+			HttpRequestContent content = new HttpRequestContent(url, request.toJson().toString());
+
+			// HTTP POSTを実行する
+			AsyncTask<HttpRequestContent, Void, HttpResponseContent> postTask
+					= new HttpPostRequestTask().execute(content);
+
+			// レスポンスを取得する
+			response = postTask.get();
+			if (response != null) {
+				Log.v("DEL_RECORD", response.toString());
+			}
+		} catch (Exception e) {
+			Log.e("DEL_RECORD", e.getMessage());
+		}
+
+		// 結果をダイアログで表示する
+		if (response != null) {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+			switch (response.getResponseCode()) {
+				case HttpURLConnection.HTTP_NO_CONTENT:
+					dialog.setTitle("成功");
+					dialog.setMessage("レコードID:" + recordId + "を削除しました。");
+					break;
+				case HttpURLConnection.HTTP_UNAUTHORIZED:
+					dialog.setTitle("ユーザー認証失敗");
+					dialog.setMessage("ユーザーID、又は、パスワードが間違っています。");
+					break;
+				case HttpURLConnection.HTTP_FORBIDDEN:
+					dialog.setTitle("不正なレコードID");
+					dialog.setMessage("指定されたIDのレコードは削除できません。");
+					break;
+				default:
+					dialog.setTitle("エラー");
+					dialog.setMessage("エラーが発生しました。");
+					break;
+			}
+			dialog.show();
+		}
 	}
 }

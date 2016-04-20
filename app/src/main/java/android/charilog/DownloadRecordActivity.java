@@ -32,6 +32,7 @@ public class DownloadRecordActivity extends AppCompatActivity {
 	EditText editTextUrl;
 	EditText editTextUserId;
 	EditText editTextPassword;
+	EditText editTextDeleteId;
 
 	SharedPreferences preferences;
 
@@ -46,6 +47,7 @@ public class DownloadRecordActivity extends AppCompatActivity {
 		editTextUrl = (EditText)findViewById(R.id.et_server_url);
 		editTextUserId = (EditText)findViewById(R.id.et_user_id);
 		editTextPassword = (EditText)findViewById(R.id.et_password);
+		editTextDeleteId = (EditText)findViewById(R.id.et_del_id);
 
 		// プリファレンスからサーバーURL、ユーザーID、パスワードを読み出す
 		preferences	= getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
@@ -58,10 +60,34 @@ public class DownloadRecordActivity extends AppCompatActivity {
 		buttonDownload.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				List<CyclingRecordDownload> list
-						= new WebController(DownloadRecordActivity.this, DownloadRecordActivity.this)
-							.downloadRecord(getConnectionInfo());
-				updateList(list);
+				ConnectionInfo info = getConnectionInfo();
+				if (info != null) {
+					List<CyclingRecordDownload> list
+							= new WebController(DownloadRecordActivity.this, DownloadRecordActivity.this)
+							.downloadRecord(info);
+					updateList(list);
+				}
+			}
+		});
+
+		// 「削除」ボタンのクリックリスナー設定
+		Button buttonDelete = (Button)findViewById(R.id.button_del);
+		buttonDelete.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
+					Integer deleteId = Integer.parseInt(editTextDeleteId.getText().toString());
+					ConnectionInfo info = getConnectionInfo();
+
+					if (info != null) {
+						WebController webController
+								= new WebController(DownloadRecordActivity.this, DownloadRecordActivity.this);
+						webController.deleteRecord(info, deleteId);
+						List<CyclingRecordDownload> list = webController.downloadRecord(info);
+						updateList(list);
+					}
+				} catch (NumberFormatException e) {
+				}
 			}
 		});
 	}
