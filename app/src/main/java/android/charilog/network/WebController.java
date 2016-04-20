@@ -36,6 +36,7 @@ public class WebController {
 
 	public void synchronize(ConnectionInfo connectionInfo) {
 		boolean isSuccess = false;
+		int resCode = 0;
 		int count = 0;
 
 		try {
@@ -69,7 +70,8 @@ public class WebController {
 
 				// アップロードに失敗した場合、処理を終了する
 				if (response.getResponseCode() != HttpURLConnection.HTTP_ACCEPTED) {
-					break;
+					resCode = response.getResponseCode();
+					throw new Exception("upload record");
 				}
 
 				// レスポンスからGPSデータ登録用keyを取得する
@@ -99,7 +101,8 @@ public class WebController {
 
 				// アップロードに失敗した場合、処理を終了する
 				if (gpsResponse.getResponseCode() != HttpURLConnection.HTTP_ACCEPTED) {
-					break;
+					resCode = gpsResponse.getResponseCode();
+					throw new Exception("upload gps");
 				}
 
 				// GPSデータ登録用キーの無効化を要求する
@@ -112,7 +115,7 @@ public class WebController {
 //				System.out.println(keyResponse.toString());
 
 				// このレコードのアップロード済みをセットする
-//				repositoryReader.setUploaded(context, record.getId());
+				repositoryReader.setUploaded(context, record.getId());
 				count++;
 			}
 			isSuccess = true;
@@ -124,8 +127,13 @@ public class WebController {
 				dialog.setTitle("成功");
 				dialog.setMessage("新たに" + count + "件登録しました。");
 			} else {
-				dialog.setTitle("エラー");
-				dialog.setMessage("途中でエラーが発生しました(" + count + "件登録済み)。");
+				if (resCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+					dialog.setTitle("ユーザー認証失敗");
+					dialog.setMessage("ユーザーID、又は、パスワードが正しくありません。");
+				} else {
+					dialog.setTitle("エラー");
+					dialog.setMessage("途中でエラーが発生しました(" + count + "件登録済み)。");
+				}
 			}
 			dialog.show();
 		}
