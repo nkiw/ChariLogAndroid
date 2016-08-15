@@ -25,5 +25,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
 
+    compile files('libs/ymap.jar')
+    compile files('libs/jackson-core-2.8.0.jar')
+
     provided "org.projectlombok:lombok:1.12.6"
 }
